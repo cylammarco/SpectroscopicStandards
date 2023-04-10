@@ -1,12 +1,82 @@
 <!DOCTYPE html>
-<html lang = "en-US"> 
-<head>
-  <meta charset = "UTF-8" />
-  <title>helloWorld</title>
-</head>
-<body>
-<?php
-	print "<h1>Hello World!</h1>";
-?>
-</body>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Spectroscopic Standards</title>
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+  </head>
+
+  <body>
+    <div id="chart"></div>
+  </body>
+
+  <script>
+    google.charts.load("current", { packages: ["corechart"] });
+    google.charts.setOnLoadCallback(drawChart);
+    // Global variable to cache parsed data
+    var parsedData = null;
+
+    function drawChart() {
+      // Get the selected CSV file
+      var csvFile =
+        "https://raw.githubusercontent.com/cylammarco/SpectroscopicStandards/main/esoxshooter/fEG274.dat?token=GHSAT0AAAAAAB75UTAQVIMMJ4YJON43SGIMZBUQSLA";
+
+      // Load the CSV file
+      var loadData = function () {
+        return fetch(csvFile)
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.text();
+          })
+          .then(function (text) {
+            // Parse the space-separated file
+            var rows = text.split("\n");
+            var data = new google.visualization.DataTable({
+              cols: [
+                { id: "wavelength", label: "Wavelength", type: "number" },
+                { id: "flux", label: "Flux", type: "number" },
+              ],
+            });
+            for (var i = 0; i < rows.length - 1; i++) {
+              var cells = rows[i].split(/\s+/).map(function (x) {
+                return parseFloat(x);
+              });
+              data.addRow(cells);
+            }
+            // Cache the parsed data
+            parsedData = data;
+            return data;
+          })
+          .catch(function (error) {
+            console.error("Error loading CSV file:", error);
+          });
+      };
+
+      // Create the chart
+      var createChart = function (data) {
+        var options = {
+          title: "Eso XShooter EG274",
+          width: 1024,
+          height: 768,
+        };
+        var chart = new google.visualization.LineChart(
+          document.getElementById("chart")
+        );
+        chart.draw(data, options);
+      };
+
+      // Check if parsed data is cached
+      if (parsedData !== null) {
+        createChart(parsedData);
+      } else {
+        loadData().then(createChart);
+      }
+    }
+  </script>
+  >
 </html>
