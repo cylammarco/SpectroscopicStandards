@@ -9,6 +9,9 @@
     ></script>
   </head>
 
+  <select id="keys-dropdown"></select>
+  <select id="items-dropdown"></select>
+
   <body>
     <div id="chart"></div>
   </body>
@@ -76,6 +79,39 @@
         loadData().then(createChart);
       }
     }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "designation_to_filename.json", true);
+    xhr.onload = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        var data = JSON.parse(xhr.responseText);
+
+        var keys = Object.keys(data);
+        var select = document.getElementById("keys-dropdown");
+
+        for (var i = 0; i < keys.length; i++) {
+          var option = document.createElement("option");
+          option.text = keys[i];
+          select.add(option);
+        }
+      }
+    };
+    xhr.send();
+
+    var select = document.getElementById("items-dropdown");
+
+    document.getElementById("keys-dropdown").addEventListener("change", function() {
+      var key = this.value;
+      var items = data[key];
+
+      select.options.length = 0;
+
+      for (var i = 0; i < items.length; i++) {
+        var option = document.createElement("option");
+        option.text = items[i];
+        select.add(option);
+      }
+    });
   </script>
   >
 </html>
