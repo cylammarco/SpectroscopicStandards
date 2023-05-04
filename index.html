@@ -3,17 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <title>Spectroscopic Standards</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"
+      rel="stylesheet"
+    />
     <script
-      type="text/javascript"
-      src="https://www.gstatic.com/charts/loader.js"
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
     ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
   </head>
 
-  <select id="keys-dropdown"></select>
-  <select id="items-dropdown"></select>
-
   <body>
-    <div id="chart"></div>
+    <div class="container-fluid">
+      <!-- Top panel -->
+      <!-- py for vertical padding, px for horizontal padding -->
+      <div class="row bg-secondary text-white py-4 px-5">Placeholder here</div>
+
+      <!-- Body -->
+      <div class="row">
+        <!-- Left hand side control column -->
+        <div class="col-sm-3">
+          <a>Designation:</a>
+          <p><select id="dropdown1"></select></p>
+          <a>Available in the following libraries:</a>
+          <div id="libraries"></div>
+        </div>
+
+        <!-- Right hand side display panel -->
+
+        <div class="col">
+          <div class="row"></div>
+
+          <div id="chart"></div>
+
+          <div class="row"></div>
+        </div>
+      </div>
+    </div>
   </body>
 
   <script>
@@ -23,12 +62,22 @@
     var parsedData = null;
 
     function drawChart() {
-      // Get the selected CSV file
-      var csvFile = "esoxshooter/fEG274.dat";
+      // Get the selected DAT file
+      // For "testing"
+      //var datFile = "ingfg/g138.fg";
+      //var datFile = "ingfg/g138a.fg";
+      //var datFile = "ingmas/f110a.mas";
+      //var datFile = "ingog/bd17.og";
+      //var datFile = "ingog/bd17a.og";
+      var datFile = "ingoke/bd33.oke";
+      //var datFile = "ingoke/bd33a.oke";
+      //var datFile = "ingoke/f24.oke";
+      //var datFile = "ingsto/f25.sto";
+      //var datFile = "ingsto/f25a.sto";
 
-      // Load the CSV file
+      // Load the DAT file
       var loadData = function () {
-        return fetch(csvFile)
+        return fetch(datFile)
           .then(function (response) {
             if (!response.ok) {
               throw new Error("Network response was not ok");
@@ -45,26 +94,167 @@
               ],
             });
             for (var i = 0; i < rows.length - 1; i++) {
-              var cells = rows[i].split(/\s+/).map(function (x) {
-                return parseFloat(x);
-              });
+              // 1 - remove leading space
+              // 2 - split by space
+              // 3 - get only first two items
+              // 4 - parse as float
+              if (
+                rows[i].startsWith("#") |
+                rows[i].startsWith("*") |
+                rows[i].startsWith("SET")
+              ) {
+                continue;
+              }
+              var cells = rows[i]
+                .replace(/^\s+/g, "")
+                .split(/\s+/)
+                .slice(0, 2)
+                .map(function (x) {
+                  return parseFloat(x);
+                });
+              if (isNaN(cells.slice(0, 1))) {
+                continue;
+              }
+              var lib = datFile.split("/")[0];
+              var [filename, extension] = datFile.split("/")[1].split(".");
+              if (lib == "esoxshooter") {
+                // Do nothing
+              } else if (lib.startsWith("eso")) {
+                cells[1] *= 1e-16;
+              } else if (lib.startsWith("iraf")) {
+                cells[1] =
+                  (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
+                  3.33564095e4 /
+                  cells[0] ** 2;
+              } else if (lib.startsWith("ing")) {
+                // for fg
+                if (extension == "fg") {
+                  if (filename.endsWith("a")) {
+                    cells[1] =
+                      (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
+                      3.33564095e4 /
+                      cells[0] ** 2;
+                  } else {
+                    cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
+                  }
+                }
+
+                // for mas
+                if (extension == "mas") {
+                  cells[1] =
+                    (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
+                    3.33564095e4 /
+                    cells[0] ** 2;
+                }
+
+                // for og
+                if (extension == "og") {
+                  if (filename.endsWith("a")) {
+                    cells[1] =
+                      (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
+                      3.33564095e4 /
+                      cells[0] ** 2;
+                  } else {
+                    if (["bd17", "hd194"].includes(filename)) {
+                      // milli Jy
+                      cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
+                    } else {
+                      // micro Jy
+                      cells[1] *= (1e-6 * 2.99792458e-5) / cells[0] ** 2;
+                    }
+                  }
+                }
+
+                // for oke
+                if (extension == "oke") {
+                  if (
+                    filename.endsWith("a") |
+                    filename.endsWith("aold") |
+                    filename.endsWith("anew")
+                  ) {
+                    cells[1] =
+                      (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
+                      3.33564095e4 /
+                      cells[0] ** 2;
+                  } else {
+                    if (
+                      [
+                        "erib",
+                        "f24",
+                        "g47",
+                        "g99",
+                        "g19old",
+                        "gd140",
+                        "grw73",
+                        "gw705old",
+                        "grw708",
+                        "he3",
+                        "hz2",
+                        "hz7",
+                        "hz14",
+                        "hz29",
+                        "hz43",
+                        "hz44old",
+                        "l745",
+                        "lb227",
+                        "lb1240",
+                        "lds235",
+                        "l870",
+                        "l930",
+                        "l970",
+                        "l1363",
+                        "l1512",
+                        "sa29",
+                        "t573",
+                        "w485",
+                        "w1346",
+                        "r627",
+                        "r640",
+                      ].includes(filename)
+                    ) {
+                      // milli Jy
+                      cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
+                    } else {
+                      // micro Jy
+                      cells[1] *= (1e-6 * 2.99792458e-5) / cells[0] ** 2;
+                    }
+                  }
+                }
+
+                // for sto
+                if (extension == "sto") {
+                  if (filename.endsWith("a")) {
+                    cells[1] =
+                      (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
+                      3.33564095e4 /
+                      cells[0] ** 2;
+                  } else {
+                    // milli Jy
+                    cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
+                  }
+                }
+              } // this closes the scope of ING
+              else {
+                // Do Nothing
+              }
               data.addRow(cells);
-            }
+            } // this closes the scope for reading each row
             // Cache the parsed data
             parsedData = data;
             return data;
           })
           .catch(function (error) {
-            console.error("Error loading CSV file:", error);
+            console.error("Error loading DAT file:", error);
           });
       };
 
       // Create the chart
       var createChart = function (data) {
         var options = {
-          title: "Eso XShooter EG274",
+          title: "ESO CTIO EG274",
           width: 1024,
           height: 768,
+          vAxis: { format: "scientific" },
         };
         var chart = new google.visualization.LineChart(
           document.getElementById("chart")
@@ -80,38 +270,34 @@
       }
     }
 
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "designation_to_filename.json", true);
-    xhr.onload = function() {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        var data = JSON.parse(xhr.responseText);
+    $(document).ready(function () {
+      $.getJSON("designation_to_lib_filename.json", function (data) {
+        //
+        var dropdown1 = $("#dropdown1");
+        dropdown1.append(
+          $("<option></option>").attr("value", "").text("Select a designation")
+        );
 
-        var keys = Object.keys(data);
-        var select = document.getElementById("keys-dropdown");
+        // Populate the first dropdown with the keys from the JSON file
+        var sortedKeys = Object.keys(data).sort();
+        _.forEach(sortedKeys, function (key) {
+          dropdown1.append($("<option></option>").attr("value", key).text(key));
+        });
+        // to allow input text search in the dropdown menu
+        dropdown1.select2({
+          //theme: "bootstrap",
+          tags: true,
+        });
 
-        for (var i = 0; i < keys.length; i++) {
-          var option = document.createElement("option");
-          option.text = keys[i];
-          select.add(option);
-        }
-      }
-    };
-    xhr.send();
-
-    var select = document.getElementById("items-dropdown");
-
-    document.getElementById("keys-dropdown").addEventListener("change", function() {
-      var key = this.value;
-      var items = data[key];
-
-      select.options.length = 0;
-
-      for (var i = 0; i < items.length; i++) {
-        var option = document.createElement("option");
-        option.text = items[i];
-        select.add(option);
-      }
+        // When the first dropdown is changed, populate the second dropdown with the values for the selected key
+        dropdown1.on("change", function () {
+          var key = $(this).val();
+          var values = data[key];
+          _.forEach(values, function (value, key) {
+            $("#libraries").append(key + "<br>");
+          });
+        });
+      });
     });
   </script>
-  >
 </html>
