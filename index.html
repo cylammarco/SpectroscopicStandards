@@ -22,7 +22,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
   </head>
 
@@ -47,7 +47,7 @@
         <div class="col">
           <div class="row"></div>
 
-          <div id="chart"></div>
+          <div id="plotly-chart"></div>
 
           <div class="row"></div>
         </div>
@@ -56,221 +56,18 @@
   </body>
 
   <script>
-    google.charts.load("current", { packages: ["corechart"] });
-    google.charts.setOnLoadCallback(drawChart);
-    // Global variable to cache parsed data
-    var parsedData = null;
-
-    function drawChart() {
-      // Get the selected DAT file
-      // For "testing"
-      //var datFile = "ingfg/g138.fg";
-      //var datFile = "ingfg/g138a.fg";
-      //var datFile = "ingmas/f110a.mas";
-      //var datFile = "ingog/bd17.og";
-      //var datFile = "ingog/bd17a.og";
-      var datFile = "ingoke/bd33.oke";
-      //var datFile = "ingoke/bd33a.oke";
-      //var datFile = "ingoke/f24.oke";
-      //var datFile = "ingsto/f25.sto";
-      //var datFile = "ingsto/f25a.sto";
-
-      // Load the DAT file
-      var loadData = function () {
-        return fetch(datFile)
-          .then(function (response) {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-            return response.text();
-          })
-          .then(function (text) {
-            // Parse the space-separated file
-            var rows = text.split("\n");
-            var data = new google.visualization.DataTable({
-              cols: [
-                { id: "wavelength", label: "Wavelength", type: "number" },
-                { id: "flux", label: "Flux", type: "number" },
-              ],
-            });
-            for (var i = 0; i < rows.length - 1; i++) {
-              // 1 - remove leading space
-              // 2 - split by space
-              // 3 - get only first two items
-              // 4 - parse as float
-              if (
-                rows[i].startsWith("#") |
-                rows[i].startsWith("*") |
-                rows[i].startsWith("SET")
-              ) {
-                continue;
-              }
-              var cells = rows[i]
-                .replace(/^\s+/g, "")
-                .split(/\s+/)
-                .slice(0, 2)
-                .map(function (x) {
-                  return parseFloat(x);
-                });
-              if (isNaN(cells.slice(0, 1))) {
-                continue;
-              }
-              var lib = datFile.split("/")[0];
-              var [filename, extension] = datFile.split("/")[1].split(".");
-              if (lib == "esoxshooter") {
-                // Do nothing
-              } else if (lib.startsWith("eso")) {
-                cells[1] *= 1e-16;
-              } else if (lib.startsWith("iraf")) {
-                cells[1] =
-                  (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
-                  3.33564095e4 /
-                  cells[0] ** 2;
-              } else if (lib.startsWith("ing")) {
-                // for fg
-                if (extension == "fg") {
-                  if (filename.endsWith("a")) {
-                    cells[1] =
-                      (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
-                      3.33564095e4 /
-                      cells[0] ** 2;
-                  } else {
-                    cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
-                  }
-                }
-
-                // for mas
-                if (extension == "mas") {
-                  cells[1] =
-                    (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
-                    3.33564095e4 /
-                    cells[0] ** 2;
-                }
-
-                // for og
-                if (extension == "og") {
-                  if (filename.endsWith("a")) {
-                    cells[1] =
-                      (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
-                      3.33564095e4 /
-                      cells[0] ** 2;
-                  } else {
-                    if (["bd17", "hd194"].includes(filename)) {
-                      // milli Jy
-                      cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
-                    } else {
-                      // micro Jy
-                      cells[1] *= (1e-6 * 2.99792458e-5) / cells[0] ** 2;
-                    }
-                  }
-                }
-
-                // for oke
-                if (extension == "oke") {
-                  if (
-                    filename.endsWith("a") |
-                    filename.endsWith("aold") |
-                    filename.endsWith("anew")
-                  ) {
-                    cells[1] =
-                      (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
-                      3.33564095e4 /
-                      cells[0] ** 2;
-                  } else {
-                    if (
-                      [
-                        "erib",
-                        "f24",
-                        "g47",
-                        "g99",
-                        "g19old",
-                        "gd140",
-                        "grw73",
-                        "gw705old",
-                        "grw708",
-                        "he3",
-                        "hz2",
-                        "hz7",
-                        "hz14",
-                        "hz29",
-                        "hz43",
-                        "hz44old",
-                        "l745",
-                        "lb227",
-                        "lb1240",
-                        "lds235",
-                        "l870",
-                        "l930",
-                        "l970",
-                        "l1363",
-                        "l1512",
-                        "sa29",
-                        "t573",
-                        "w485",
-                        "w1346",
-                        "r627",
-                        "r640",
-                      ].includes(filename)
-                    ) {
-                      // milli Jy
-                      cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
-                    } else {
-                      // micro Jy
-                      cells[1] *= (1e-6 * 2.99792458e-5) / cells[0] ** 2;
-                    }
-                  }
-                }
-
-                // for sto
-                if (extension == "sto") {
-                  if (filename.endsWith("a")) {
-                    cells[1] =
-                      (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
-                      3.33564095e4 /
-                      cells[0] ** 2;
-                  } else {
-                    // milli Jy
-                    cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
-                  }
-                }
-              } // this closes the scope of ING
-              else {
-                // Do Nothing
-              }
-              data.addRow(cells);
-            } // this closes the scope for reading each row
-            // Cache the parsed data
-            parsedData = data;
-            return data;
-          })
-          .catch(function (error) {
-            console.error("Error loading DAT file:", error);
-          });
-      };
-
-      // Create the chart
-      var createChart = function (data) {
-        var options = {
-          title: "ESO CTIO EG274",
-          width: 1024,
-          height: 768,
-          vAxis: { format: "scientific" },
-        };
-        var chart = new google.visualization.LineChart(
-          document.getElementById("chart")
-        );
-        chart.draw(data, options);
-      };
-
-      // Check if parsed data is cached
-      if (parsedData !== null) {
-        createChart(parsedData);
-      } else {
-        loadData().then(createChart);
-      }
-    }
+    var chart = null;
+    var plotlyDiv = document.getElementById("plotly-chart");
+    var chartOptions = {
+      xaxis: { title: "Wavelength" },
+      yaxis: { title: "Flux", tickformat: ".2e" },
+      width: 1024,
+      height: 768,
+    };
 
     $(document).ready(function () {
+      // Clear the chart data before loading new data
+
       $.getJSON("designation_to_lib_filename.json", function (data) {
         //
         var dropdown1 = $("#dropdown1");
@@ -293,11 +90,247 @@
         dropdown1.on("change", function () {
           var key = $(this).val();
           var values = data[key];
+
+          // Clear the libraries list
+          $("#libraries").empty();
+
+          // Clear the plot
+          Plotly.purge("plotly-chart");
+
           _.forEach(values, function (value, key) {
             $("#libraries").append(key + "<br>");
+            var libFile = key + "/" + value;
+
+            drawChart(libFile);
           });
         });
       });
     });
+
+    function drawChart(datFile) {
+      // Get the selected DAT file
+      // For "testing"
+      //var datFile = "ingfg/g138.fg";
+      //var datFile = "ingfg/g138a.fg";
+      //var datFile = "ingmas/f110a.mas";
+      //var datFile = "ingog/bd17.og";
+      //var datFile = "ingog/bd17a.og";
+      //var datFile = "ingoke/bd33.oke";
+      //var datFile = "ingoke/bd33a.oke";
+      //var datFile = "ingoke/f24.oke";
+      //var datFile = "ingsto/f25.sto";
+      //var datFile = "ingsto/f25a.sto";
+      var lib = datFile.split("/")[0];
+      var filename = datFile.split("/")[1];
+      var xData = [];
+      var yData = [];
+
+      if (lib.startsWith("eso")) {
+        filename = "f" + filename;
+      }
+      if (lib.startsWith("eso") | lib.startsWith("iraf")) {
+        extension = "dat";
+      }
+      if (lib == "ingfg") {
+        extension = "fg";
+      }
+      if (lib == "ingmas") {
+        extension = "mas";
+      }
+      if (lib == "ingog") {
+        extension = "og";
+      }
+      if (lib == "ingoke") {
+        extension = "oke";
+      }
+      if (lib == "ingsto") {
+        extension = "sto";
+      }
+
+      if (["h102", "g157", "g24"].includes(filename)) {
+        filename = filename + "a";
+      }
+
+      datFile = lib + "/" + filename + "." + extension;
+
+      // Load the DAT file
+      fetch(datFile)
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.text();
+        })
+        .then(function (text) {
+          // Parse the space-separated file
+          var rows = text.split("\n");
+
+          for (var i = 0; i < rows.length - 1; i++) {
+            // 1 - remove leading space
+            // 2 - split by space
+            // 3 - get only first two items
+            // 4 - parse as float
+            if (
+              rows[i].startsWith("#") |
+              rows[i].startsWith("*") |
+              rows[i].startsWith("SET")
+            ) {
+              continue;
+            }
+            var cells = rows[i]
+              .replace(/^\s+/g, "")
+              .split(/\s+/)
+              .slice(0, 2)
+              .map(function (x) {
+                return parseFloat(x);
+              });
+            if (isNaN(cells.slice(0, 1))) {
+              continue;
+            }
+            var lib = datFile.split("/")[0];
+            var [filename, extension] = datFile.split("/")[1].split(".");
+            if (lib == "esoxshooter") {
+              // Do nothing
+            } else if (lib.startsWith("eso")) {
+              cells[1] *= 1e-16;
+            } else if (lib.startsWith("iraf")) {
+              cells[1] =
+                (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
+                3.33564095e4 /
+                cells[0] ** 2;
+            } else if (lib.startsWith("ing")) {
+              // for fg
+              if (extension == "fg") {
+                if (filename.endsWith("a")) {
+                  cells[1] =
+                    (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
+                    3.33564095e4 /
+                    cells[0] ** 2;
+                } else {
+                  cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
+                }
+              }
+
+              // for mas
+              if (extension == "mas") {
+                cells[1] =
+                  (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
+                  3.33564095e4 /
+                  cells[0] ** 2;
+              }
+
+              // for og
+              if (extension == "og") {
+                if (filename.endsWith("a")) {
+                  cells[1] =
+                    (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
+                    3.33564095e4 /
+                    cells[0] ** 2;
+                } else {
+                  if (["bd17", "hd194"].includes(filename)) {
+                    // milli Jy
+                    cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
+                  } else {
+                    // micro Jy
+                    cells[1] *= (1e-6 * 2.99792458e-5) / cells[0] ** 2;
+                  }
+                }
+              }
+
+              // for oke
+              if (extension == "oke") {
+                if (
+                  filename.endsWith("a") |
+                  filename.endsWith("aold") |
+                  filename.endsWith("anew")
+                ) {
+                  cells[1] =
+                    (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
+                    3.33564095e4 /
+                    cells[0] ** 2;
+                } else {
+                  if (
+                    [
+                      "erib",
+                      "f24",
+                      "g47",
+                      "g99",
+                      "g19old",
+                      "gd140",
+                      "grw73",
+                      "gw705old",
+                      "grw708",
+                      "he3",
+                      "hz2",
+                      "hz7",
+                      "hz14",
+                      "hz29",
+                      "hz43",
+                      "hz44old",
+                      "l745",
+                      "lb227",
+                      "lb1240",
+                      "lds235",
+                      "l870",
+                      "l930",
+                      "l970",
+                      "l1363",
+                      "l1512",
+                      "sa29",
+                      "t573",
+                      "w485",
+                      "w1346",
+                      "r627",
+                      "r640",
+                    ].includes(filename)
+                  ) {
+                    // milli Jy
+                    cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
+                  } else {
+                    // micro Jy
+                    cells[1] *= (1e-6 * 2.99792458e-5) / cells[0] ** 2;
+                  }
+                }
+              }
+
+              // for sto
+              if (extension == "sto") {
+                if (filename.endsWith("a")) {
+                  cells[1] =
+                    (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
+                    3.33564095e4 /
+                    cells[0] ** 2;
+                } else {
+                  // milli Jy
+                  cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
+                }
+              }
+            } // this closes the scope of ING
+            else {
+              // Do Nothing
+            }
+            xData.push(cells[0]);
+            yData.push(cells[1]);
+          } // this closes the scope for reading each row
+
+          var newData = {
+            x: xData,
+            y: yData,
+            type: "scatter",
+            mode: "lines",
+            name: datFile,
+          };
+
+          try {
+            Plotly.addTraces(plotlyDiv, [newData]);
+          } catch (error) {
+            console.log(error);
+            Plotly.newPlot(plotlyDiv, [newData], chartOptions);
+          }
+        })
+        .catch(function (error) {
+          console.error("Error loading DAT file:", error);
+        });
+    }
   </script>
 </html>
