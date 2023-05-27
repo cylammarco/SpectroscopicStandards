@@ -24,27 +24,40 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script type="text/javascript" src="https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js" charset="utf-8"></script>
+    <style>.fixed-row-bottom { position: fixed; bottom: 0; width: 100%}</style>
   </head>
 
   <body>
     <div class="container-fluid">
       <!-- Top panel -->
       <!-- py for vertical padding, px for horizontal padding -->
-      <div class="row bg-secondary text-white py-4 px-5">Placeholder here</div>
+      <div class="row bg-dark text-white py-4 px-5">
+        Spectroscopic Standards Web Viewer
+      </div>
 
       <!-- Body -->
       <div class="row">
         <!-- Left hand side control column -->
-        <div class="col-sm-3">
+        <div class="col-3">
           <a>Designation:</a>
           <p><select id="dropdown1"></select></p>
-          <a>Available in the following libraries:</a>
+          <a>Available in these libraries:</a>
           <div id="libraries"></div>
+
+          <br></br>
+
+          <a>Equatorial Coordinates (J2000):</a>
+          <div id="coordinates"></div>
+
+          <br></br>
+          <div id="aladin-lite-div" style="width:250px;height:250px;"></div>
+
         </div>
 
         <!-- Right hand side display panel -->
 
-        <div class="col">
+        <div class="col-9">
           <div class="row"></div>
 
           <div id="plotly-chart"></div>
@@ -52,10 +65,26 @@
           <div class="row"></div>
         </div>
       </div>
+
+      <!-- Footer -->
+      <div class="row fixed-row-bottom bg-dark text-white py-4 px-5">
+        <p>
+          Data are available from: <a href="https://eso.org/sci/observing/tools/standards.html">ESO</a>,
+          <a href="https://www.ing.iac.es//Astronomy/observing/manuals/html_manuals/tech_notes/tn065-100/workflux.html">ING</a>
+          and <a href="https://github.com/iraf-community/iraf/tree/main/noao/lib/onedstds">iraf</a>.
+        </p>
+      </div>
+
     </div>
   </body>
 
-  <script>
+  <!-- script for the aladin widget -->
+  <script type="text/javascript">
+  let aladin;
+  A.init.then(() => {
+    aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:0.016666, projection: "TAN", showProjectionControl: false, target: "0.0, 0.0"});
+  });
+
     var chart = null;
     var plotlyDiv = document.getElementById("plotly-chart");
     var chartOptions = {
@@ -66,17 +95,24 @@
     };
 
     $(document).ready(function () {
-      // Clear the chart data before loading new data
 
-      $.getJSON("designation_to_lib_filename.json", function (data) {
-        //
+      // Define variables for both JSON file URLs
+      var libFilenameUrl = "designation_to_lib_filename.json";
+      var coordinateUrl = "designation_to_position.json";
+
+      $.when($.getJSON(libFilenameUrl), $.getJSON(coordinateUrl)).done(function (libFilenameResult, coordinateResult) {
+        
+        var libFilenameData = libFilenameResult[0];
+        var coordinateData = coordinateResult[0];
+
         var dropdown1 = $("#dropdown1");
         dropdown1.append(
           $("<option></option>").attr("value", "").text("Select a designation")
         );
 
         // Populate the first dropdown with the keys from the JSON file
-        var sortedKeys = Object.keys(data).sort();
+        var sortedKeys = Object.keys(libFilenameData).sort();
+        console.log(libFilenameData);
         _.forEach(sortedKeys, function (key) {
           dropdown1.append($("<option></option>").attr("value", key).text(key));
         });
@@ -89,23 +125,50 @@
         // When the first dropdown is changed, populate the second dropdown with the values for the selected key
         dropdown1.on("change", function () {
           var key = $(this).val();
-          var values = data[key];
+          var libFilenameValues = libFilenameData[key];
+          var coordinateValues = coordinateData[key];
 
           // Clear the libraries list
           $("#libraries").empty();
+          $("#coordinates").empty();
 
           // Clear the plot
           Plotly.purge("plotly-chart");
 
-          _.forEach(values, function (value, key) {
+          _.forEach(libFilenameValues, function (value, key) {
             $("#libraries").append(key + "<br>");
             var libFile = key + "/" + value;
 
             drawChart(libFile);
           });
+
+          // Update the #coordinates element with the values from designation_to_position.json
+          var coordinateText = coordinateValues[Object.keys(coordinateValues)[0]];
+          var coordinateElement = $("<div></div>").text(coordinateText);
+          
+          // Add a button element to copy the coordinate value
+          var copyButton = $("<button></button>").text("Copy").click(function () {
+            copyToClipboard(coordinateText);
+          });
+          
+          // Append the button element to the coordinate element
+          coordinateElement.append(copyButton);
+
+          $("#coordinates").append(coordinateElement);
+          console.log(coordinateText);
+          aladin.gotoRaDec(coordinateText[0], coordinateText[1]);
         });
       });
     });
+
+    // Function to copy the specified text to the clipboard
+    function copyToClipboard(text) {
+      var tempInput = $("<input>");
+      $("body").append(tempInput);
+      tempInput.val(text).select();
+      document.execCommand("copy");
+      tempInput.remove();
+    }
 
     function drawChart(datFile) {
       // Get the selected DAT file
