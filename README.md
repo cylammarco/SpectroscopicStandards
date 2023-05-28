@@ -6,3 +6,5 @@ The webpage generated from the scripts in this repository can be found at:
 <https://cylammarco.github.io/SpectroscopicStandards/>
 
 ![alt text](https://github.com/cylammarco/SpectroscopicStandards/blob/main/screenshot-preview.png?raw=true)
+
+If you have made use of this tool, we would appreciate if you could reference <https://zenodo.org/record/7978970>.
