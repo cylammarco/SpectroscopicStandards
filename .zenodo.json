@@ -1,0 +1,14 @@
+{
+    "description": "A minimally interactive web tool for comparing standard stars from various standard libraries.",
+    "license": "BSD-3-Clause",
+    "title": "Spectroscopic Standards Web Viewer",
+    "upload_type": "other",
+    "creators": [
+        {
+            "affiliation": "Tel Aviv University",
+            "name": "Lam, Marco C",
+            "orcid": "0000-0002-9347-2298"
+        }
+    ],
+    "access_right": "open"
+}
