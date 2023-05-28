@@ -32,8 +32,8 @@
     <div class="container-fluid">
       <!-- Top panel -->
       <!-- py for vertical padding, px for horizontal padding -->
-      <div class="row bg-dark text-white py-4 px-5">
-        Spectroscopic Standards Web Viewer
+      <div class="row bg-dark text-white py-4 px-4">
+        <p><big>Spectroscopic Standards Web Viewer</big></p>
       </div>
 
       <!-- Body -->
@@ -67,7 +67,7 @@
       </div>
 
       <!-- Footer -->
-      <div class="row fixed-row-bottom bg-dark text-white py-4 px-5">
+      <div class="row fixed-row-bottom bg-dark text-white py-4 px-4">
         <p>
           Data are available from: <a href="https://eso.org/sci/observing/tools/standards.html">ESO</a>,
           <a href="https://www.ing.iac.es//Astronomy/observing/manuals/html_manuals/tech_notes/tn065-100/workflux.html">ING</a>
@@ -155,7 +155,6 @@
           coordinateElement.append(copyButton);
 
           $("#coordinates").append(coordinateElement);
-          console.log(coordinateText);
           aladin.gotoRaDec(coordinateText[0], coordinateText[1]);
         });
       });
