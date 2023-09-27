@@ -92,7 +92,7 @@
   <script type="text/javascript">
   let aladin;
   A.init.then(() => {
-    aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:0.016666, projection: "TAN", showProjectionControl: false, target: "0.0, 0.0"});
+    aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:0.05, projection: "TAN", showProjectionControl: false, target: "0.0, 0.0"});
   });
 
     var chart = null;
@@ -104,72 +104,96 @@
       height: 768,
     };
 
+    // Global variable to store the cached JSON data
+    var cachedJsonData = {};
+
     $(document).ready(function () {
 
       // Define variables for both JSON file URLs
       var libFilenameUrl = "designation_to_lib_filename.json";
       var coordinateUrl = "designation_to_position.json";
 
-      $.when($.getJSON(libFilenameUrl), $.getJSON(coordinateUrl)).done(function (libFilenameResult, coordinateResult) {
+      var dropdown1 = $("#dropdown1");
+      dropdown1.append(
+        $("<option></option>").attr("value", "").text("Select a designation")
+      );
+      
+      // Check if the JSON data is already cached
+      if (cachedJsonData[libFilenameUrl] && cachedJsonData[coordinateUrl]) {
+
+        // Populate the dropdown menu with the cached data
+        populateDropdownMenu(cachedJsonData[libFilenameUrl], cachedJsonData[coordinateUrl]);
+
+      } else {
+
+        // Make an AJAX request to fetch the JSON data
+        $.when($.getJSON(libFilenameUrl), $.getJSON(coordinateUrl)).done(function(libFilenameResult, coordinateResult) {
+
+          // Cache the JSON data
+          cachedJsonData[libFilenameUrl] = libFilenameResult[0];
+          cachedJsonData[coordinateUrl] = coordinateResult[0];
+
+          // Populate the dropdown menu with the response
+          populateDropdownMenu(cachedJsonData[libFilenameUrl], cachedJsonData[coordinateUrl]);
+
+        });
+
+      }
+
+      // When the first dropdown is changed, populate the second dropdown with the values for the selected key
+      dropdown1.on("change", function () {
+        var key = $(this).val();
+        var libFilenameValues = cachedJsonData[libFilenameUrl][key];
+        var coordinateValues = cachedJsonData[coordinateUrl][key];
+
+        // Clear the libraries list
+        $("#libraries").empty();
+        $("#coordinates").empty();
+
+        // Clear the plot
+        Plotly.purge("plotly-chart");
+
+        _.forEach(libFilenameValues, function (value, key) {
+          $("#libraries").append(key + "<br>");
+          var libFile = key + "/" + value;
+
+          drawChart(libFile);
+        });
+
+        // Update the #coordinates element with the values from designation_to_position.json
+        var coordinateText = coordinateValues[Object.keys(coordinateValues)[0]];
+        var coordinateElement = $("<div></div>").text(coordinateText);
         
-        var libFilenameData = libFilenameResult[0];
-        var coordinateData = coordinateResult[0];
-
-        var dropdown1 = $("#dropdown1");
-        dropdown1.append(
-          $("<option></option>").attr("value", "").text("Select a designation")
-        );
-
-        // Populate the first dropdown with the keys from the JSON file
-        var sortedKeys = Object.keys(libFilenameData).sort();
-        console.log(libFilenameData);
-        _.forEach(sortedKeys, function (key) {
-          dropdown1.append($("<option></option>").attr("value", key).text(key));
+        // Add a button element to copy the coordinate value
+        var copyButton = $("<button></button>").text("Copy").click(function () {
+          copyToClipboard(coordinateText);
         });
-        // to allow input text search in the dropdown menu
-        dropdown1.select2({
-          //theme: "bootstrap",
-          tags: true,
-        });
+        
+        // Append the button element to the coordinate element
+        coordinateElement.append(copyButton);
 
-        // When the first dropdown is changed, populate the second dropdown with the values for the selected key
-        dropdown1.on("change", function () {
-          var key = $(this).val();
-          var libFilenameValues = libFilenameData[key];
-          var coordinateValues = coordinateData[key];
-
-          // Clear the libraries list
-          $("#libraries").empty();
-          $("#coordinates").empty();
-
-          // Clear the plot
-          Plotly.purge("plotly-chart");
-
-          _.forEach(libFilenameValues, function (value, key) {
-            $("#libraries").append(key + "<br>");
-            var libFile = key + "/" + value;
-
-            drawChart(libFile);
-          });
-
-          // Update the #coordinates element with the values from designation_to_position.json
-          var coordinateText = coordinateValues[Object.keys(coordinateValues)[0]];
-          var coordinateElement = $("<div></div>").text(coordinateText);
-          
-          // Add a button element to copy the coordinate value
-          var copyButton = $("<button></button>").text("Copy").click(function () {
-            copyToClipboard(coordinateText);
-          });
-          
-          // Append the button element to the coordinate element
-          coordinateElement.append(copyButton);
-
-          $("#coordinates").append(coordinateElement);
-          aladin.gotoRaDec(coordinateText[0], coordinateText[1]);
-        });
+        $("#coordinates").append(coordinateElement);
+        aladin.gotoRaDec(coordinateText[0], coordinateText[1]);
       });
     });
 
+    function populateDropdownMenu(libFilenameData, coordinateData) {
+
+      // Populate the dropdown with the keys from the JSON file
+      var dropdown1 = $("#dropdown1");
+      dropdown1.select2({
+        data: _.map(Object.keys(libFilenameData).sort(), function(key) {
+          return {
+            id: key,
+            text: key
+          };
+        }),
+        // to allow input text search in the dropdown menu
+        tags: true
+      });
+
+    }
+    
     // Function to copy the specified text to the clipboard
     function copyToClipboard(text) {
       var tempInput = $("<input>");
