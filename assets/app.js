@@ -774,7 +774,8 @@ async function runVisibility() {
     const timeZone = await Visibility.resolveTimeZone(rawSettings);
     if (request !== state.visibilityRequest) return;
     const targetName = selectedTarget() || currentSpectrum()?.filename || "Target";
-    const data = Visibility.buildData(Visibility.withTimeZone(rawSettings, timeZone), selectedCoordinate(), targetName);
+    const observatoryName = elements.visibilityObservatory.value || "Custom location";
+    const data = Visibility.buildData(Visibility.withTimeZone(rawSettings, timeZone), selectedCoordinate(), targetName, observatoryName);
     state.visibility = data;
     elements.visibilityTarget.textContent = data.targetName;
     renderVisibilityChart(data);

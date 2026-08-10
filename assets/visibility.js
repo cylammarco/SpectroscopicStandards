@@ -197,7 +197,7 @@ window.Visibility = (() => {
     };
   }
 
-  function buildData(settings, coordinate, targetName) {
+  function buildData(settings, coordinate, targetName, observatoryName) {
     // Input catalogue coordinates are J2000. Proper motion and precession to the
     // observing date are not applied, so this remains a planning approximation.
     if (!coordinate || (coordinate[0] === 0 && coordinate[1] === 0)) throw new Error("This target has no usable sky coordinate.");
@@ -224,7 +224,7 @@ window.Visibility = (() => {
         moonDistance: angularDistanceDegrees(target, moon),
       });
     }
-    return { settings, target, targetName, points };
+    return { settings, target, targetName, observatoryName, points };
   }
 
   function twilightShapes(points) {
@@ -270,19 +270,20 @@ window.Visibility = (() => {
 
   function renderChart(chart, data, showMoon) {
     if (!window.Plotly) return false;
-    const { points, settings, targetName } = data;
+    const { points, settings, targetName, observatoryName } = data;
     const targetAltitudes = points.map((point) => point.altitude);
     const lowestVisible = -10;
     const horizon = observerHorizonDegrees(settings.elevation);
+    const nightDate = new Intl.DateTimeFormat("en-GB", { dateStyle: "long", timeZone: "UTC" })
+      .format(new Date(Date.UTC(settings.year, settings.month - 1, settings.day)));
+    // MJD is Julian Date − 2400000.5.
+    const modifiedJulianDate = julianDate(settings.start) - 2400000.5;
+    const locationDetails = `Longitude ${settings.longitude.toFixed(4)}° · Latitude ${settings.latitude.toFixed(4)}° · Altitude ${settings.elevation.toFixed(0)} m`;
     const traces = [
       {
         x: points.map((point) => point.hour), y: targetAltitudes, type: "scatter", mode: "lines", name: targetName,
         line: { color: "#0b4f8a", width: 3 }, customdata: points.map((point) => [point.localTime, point.utcTime, point.siderealTime, point.twilight.label]),
         hovertemplate: "Local %{customdata[0]}<br>UT %{customdata[1]}<br>LST %{customdata[2]}<br>Altitude %{y:.1f}°<br>%{customdata[3]}<extra>Target</extra>",
-      },
-      {
-        x: [16, 32], y: [horizon, horizon], type: "scatter", mode: "lines", name: settings.elevation > 0 ? `Visible horizon (${horizon.toFixed(1)}°)` : "Horizon (0°)",
-        line: { color: "#333", width: 1.25, dash: "dash" }, hovertemplate: "Visible horizon %{y:.1f}°<extra></extra>",
       },
     ];
     if (showMoon) {
@@ -294,10 +295,14 @@ window.Visibility = (() => {
       });
     }
     const layout = {
-      autosize: true, margin: { l: 68, r: 78, t: 28, b: 102 }, paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "#ffffff", font: { color: "#1f2933" },
-      xaxis: { range: [16, 32], title: "Local time<br><span style=\"font-size:10px\">UT · local sidereal time</span>", ...visibilityTicks(data), tickfont: { size: 10 }, gridcolor: "rgba(0,0,0,.18)", zeroline: false },
+      autosize: true, margin: { l: 68, r: 78, t: 120, b: 102 }, paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "#ffffff", font: { color: "#1f2933" },
+      title: {
+        text: `Night of ${nightDate} [MJD ${modifiedJulianDate.toFixed(3)}]<br>${observatoryName}<br><span style="font-size:11px">${locationDetails}</span>`,
+        x: 0.5, xanchor: "center", y: 0.9, yanchor: "top", font: { size: 16 },
+      },
+      xaxis: { range: [16, 32], title: "Time<br>", ...visibilityTicks(data), tickfont: { size: 10 }, gridcolor: "rgba(0,0,0,.18)", zeroline: false },
       yaxis: { range: [lowestVisible, 90], title: "Altitude (°)", dtick: 10, gridcolor: "rgba(0,0,0,.2)", zeroline: false }, yaxis2: airmassAxis([lowestVisible, 90]),
-      legend: { orientation: "h", yanchor: "bottom", y: 1.02, xanchor: "left", x: 0, bgcolor: "rgba(255,255,255,.72)" }, shapes: twilightShapes(points), hovermode: "x unified", showlegend: true,
+      legend: { orientation: "v", yanchor: "top", y: 0.99, xanchor: "left", x: 0.01, bgcolor: "rgba(255,255,255,.72)" }, shapes: twilightShapes(points), hovermode: "x unified", showlegend: true,
     };
     window.Plotly.react(chart, traces, layout, { responsive: true, displaylogo: false, modeBarButtonsToRemove: ["lasso2d", "select2d"] });
     return true;
