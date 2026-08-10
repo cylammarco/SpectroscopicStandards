@@ -1,434 +1,205 @@
-<!DOCTYPE html>
-<html lang="en-US">
+<!doctype html>
+<html lang="en-GB">
   <head>
-    <!-- Google tag (gtag.js) -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Browse, compare, and download spectrophotometric standard-star spectra." />
+    <title>Spectroscopic Standards</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+    <link href="assets/app.css" rel="stylesheet" />
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-L8GGC29J2H"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
+      function gtag(){ dataLayer.push(arguments); }
       gtag('js', new Date());
-
       gtag('config', 'G-L8GGC29J2H');
     </script>
-    <meta charset="UTF-8" />
-    <title>Spectroscopic Standards</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"
-      rel="stylesheet"
-    />
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-basic-latest.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <script type="text/javascript" src="https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js" charset="utf-8"></script>
-    <style>.fixed-row-bottom { position: fixed; bottom: 0; width: 100%}</style>
+    <script defer src="https://cdn.plot.ly/plotly-basic-2.35.3.min.js"></script>
+    <script defer src="https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js" charset="utf-8"></script>
+    <script defer src="assets/app.js"></script>
   </head>
-
   <body>
-    <div class="container-fluid">
-      <!-- Top panel -->
-      <!-- py for vertical padding, px for horizontal padding -->
-      <div class="row bg-dark text-white py-4 px-4">
-        <p><big>Spectroscopic Standards Web Viewer</big></p>
-      </div>
+    <div class="container-fluid p-0 app-shell">
+      <div class="row g-0">
+        <aside class="col-12 col-lg-2 app-sidebar">
+          <a class="brand" href="./" aria-label="Spectroscopic Standards home">
+            <span><small>Catalogue viewer</small><strong>Spectroscopic<br />Standards</strong></span>
+          </a>
+          <div class="sidebar-body">
+            <p class="nav-caption">Explore spectra</p>
+            <nav class="nav mode-nav flex-lg-column" aria-label="Catalogue modes">
+              <button class="nav-link active" type="button" data-mode="global">Global search</button>
+              <span class="sidebar-divider" role="separator" aria-hidden="true"></span>
+              <button class="nav-link" type="button" data-mode="ESO">ESO library</button>
+              <button class="nav-link" type="button" data-mode="ING">ING library</button>
+              <button class="nav-link" type="button" data-mode="IRAF">IRAF library</button>
+              <span class="sidebar-divider" role="separator" aria-hidden="true"></span>
+              <button class="nav-link" type="button" data-mode="citations">Sources &amp; citations</button>
+            </nav>
+            <div class="sidebar-note">
+              Search aliases across every catalogue, or browse provider folders and their spectra.
+            </div>
+          </div>
+        </aside>
 
-      <!-- Body -->
-      <div class="row">
-        <!-- Left hand side control column -->
-        <div class="col-3">
-          <a>Designation:</a>
-          <p><select id="dropdown1"></select></p>
-          <a>Available in these libraries:</a>
-          <div id="libraries"></div>
+        <div class="col app-main">
+          <header class="topbar d-flex flex-column flex-xl-row align-items-xl-center gap-3 px-3 px-md-4 py-3">
+            <nav class="breadcrumb-trail" aria-label="Breadcrumb">
+              <span>Spectra</span><span class="breadcrumb-arrow" aria-hidden="true">&gt;</span><span id="breadcrumb-mode" aria-current="page">Global search</span>
+            </nav>
+            <div class="topbar-options ms-xl-auto">
+              <label class="topbar-select" for="aladin-survey"><span>Base image</span><select class="form-select form-select-sm" id="aladin-survey"><option value="P/DSS2/color">DSS2 colour</option><option value="P/DSS2/red">DSS2 red</option><option value="P/2MASS/color">2MASS infrared</option><option value="P/SDSS9/color">SDSS9 colour</option><option value="PanSTARRS/DR1/color-i-r-g">Pan-STARRS DR1 colour</option></select></label>
+              <label class="topbar-select" for="theme-select"><span>Colour theme</span><select class="form-select form-select-sm" id="theme-select"><option value="midnight">Midnight</option><option value="nebula">Nebula</option><option value="observatory">Observatory</option><option value="ember">Ember</option></select></label>
+            </div>
+          </header>
 
-          <br></br>
+          <main class="main-content">
+            <section class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+              <div>
+                <div class="card-kicker">Spectrophotometric libraries</div>
+                <h1 class="page-title mb-1">Explore standard-star spectra</h1>
+                <p class="page-subtitle mb-0" id="mode-intro">Find a target by any known designation, then compare available spectra.</p>
+              </div>
+              <div class="selection-status text-md-end" id="selection-status">Loading catalogue…</div>
+            </section>
 
-          <a>Equatorial Coordinates (J2000):</a>
-          <div id="coordinates"></div>
+            <section class="dashboard-card d-none" id="citations-panel" aria-labelledby="citations-title">
+              <div class="card-header"><div class="card-kicker">Data provenance</div><h2 class="card-title" id="citations-title">Sources &amp; citations</h2></div>
+              <div class="card-body">
+                <p class="page-subtitle">One line per data folder. ADS links open the publication abstract; source-page URLs are omitted.</p>
 
-          <br></br>
-          <div id="aladin-lite-div" style="width:250px;height:250px;"></div>
+                <section class="citation-section" aria-labelledby="citations-eso">
+                  <div class="citation-section-heading"><div><div class="card-kicker">ESO</div><h3 class="h6 mb-0" id="citations-eso">ESO folders</h3></div><span>5 folders</span></div>
+                  <div class="citation-rows" role="list">
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>esoxshooter</code><span>X-shooter reference spectra</span></div><p>Moehler et al. (2014), <em>Flux calibration of medium-resolution spectra from 300 nm to 2500 nm</em>, A&amp;A, 568, A9.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/2014A%26A...568A...9M/abstract" target="_blank" rel="noopener noreferrer">ADS abstract <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>esowdstan</code><span>White dwarf standards</span></div><p>Bohlin (2007), <em>HST Stellar Standards with 1% Accuracy in Absolute Flux</em>, ASP Conf. Ser., 364, 315.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/2007ASPC..364..315B/abstract" target="_blank" rel="noopener noreferrer">ADS abstract <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>esohststan</code><span>HST standards</span></div><p>Bohlin (2007), <em>HST Stellar Standards with 1% Accuracy in Absolute Flux</em>, ASP Conf. Ser., 364, 315.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/2007ASPC..364..315B/abstract" target="_blank" rel="noopener noreferrer">ADS abstract <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>esookestan</code><span>Oke standards</span></div><p>Oke (1990), <em>Faint spectrophotometric standard stars</em>, AJ, 99, 1621.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1990AJ.....99.1621O/abstract" target="_blank" rel="noopener noreferrer">ADS abstract <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>esoctiostan</code><span>CTIO standards</span></div><p>Hamuy et al. (1992), <em>Southern spectrophotometric standards. I</em>, PASP, 104, 533; Hamuy et al. (1994), <em>II</em>, PASP, 106, 566.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1992PASP..104..533H/abstract" target="_blank" rel="noopener noreferrer">ADS 1992 <span aria-hidden="true">↗</span></a><a href="https://ui.adsabs.harvard.edu/abs/1994PASP..106..566H/abstract" target="_blank" rel="noopener noreferrer">ADS 1994 <span aria-hidden="true">↗</span></a></div></article>
+                  </div>
+                </section>
 
+                <section class="citation-section" aria-labelledby="citations-ing">
+                  <div class="citation-section-heading"><div><div class="card-kicker">ING</div><h3 class="h6 mb-0" id="citations-ing">ING folders</h3></div><span>5 folders</span></div>
+                  <div class="citation-rows" role="list">
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>ingoke</code><span>Oke standards</span></div><p>Oke (1974), <em>Absolute spectral energy distributions for white dwarfs</em>, ApJS, 27, 21.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1974ApJS...27...21O/abstract" target="_blank" rel="noopener noreferrer">ADS abstract <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>ingmas</code><span>Massey standards</span></div><p>Massey et al. (1988), <em>Spectrophotometric standards</em>, ApJ, 328, 315.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1988ApJ...328..315M/abstract" target="_blank" rel="noopener noreferrer">ADS abstract <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>ingog</code><span>Oke–Gunn standards</span></div><p>Oke &amp; Gunn (1983), <em>Secondary standard stars for absolute spectrophotometry</em>, ApJ, 266, 713.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1983ApJ...266..713O/abstract" target="_blank" rel="noopener noreferrer">ADS abstract <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>ingsto</code><span>Stone standards</span></div><p>Stone (1977), ApJ, 218, 767.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1977ApJ...218..767S/abstract" target="_blank" rel="noopener noreferrer">ADS abstract <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>ingfg</code><span>Filippenko–Greenstein standards</span></div><p>Filippenko &amp; Greenstein (1984), <em>Faint spectrophotometric standard stars for large optical telescopes. I</em>, PASP, 96, 530.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1984PASP...96..530F/abstract" target="_blank" rel="noopener noreferrer">ADS abstract <span aria-hidden="true">↗</span></a></div></article>
+                  </div>
+                </section>
+
+                <section class="citation-section" aria-labelledby="citations-iraf">
+                  <div class="citation-section-heading"><div><div class="card-kicker">IRAF</div><h3 class="h6 mb-0" id="citations-iraf">IRAF folders</h3></div><span>11 folders</span></div>
+                  <p class="citation-note">The IRAF catalogue labels several historical sets as unpublished or various-source. For those rows, the ADS link cites the IRAF implementation paper.</p>
+                  <div class="citation-rows" role="list">
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>irafblackbody</code><span>Blackbody band responses</span></div><p>IRAF ONEDSTDS blackbody calibration curves; no external data paper specified.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1993ASPC...52..173T/abstract" target="_blank" rel="noopener noreferrer">ADS · IRAF <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>irafbstdscal</code><span>Bright KPNO IRS standards</span></div><p>Various sources transformed to the Hayes–Latham system; unpublished in the catalogue.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1993ASPC...52..173T/abstract" target="_blank" rel="noopener noreferrer">ADS · IRAF <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>irafctiocal</code><span>CTIO calibration</span></div><p>Stone &amp; Baldwin (1983), <em>Southern spectrophotometric standards for large telescopes</em>, MNRAS, 204, 347; Baldwin &amp; Stone (1984), <em>II</em>, MNRAS, 206, 241.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1983MNRAS.204..347S/abstract" target="_blank" rel="noopener noreferrer">ADS 1983 <span aria-hidden="true">↗</span></a><a href="https://ui.adsabs.harvard.edu/abs/1984MNRAS.206..241B/abstract" target="_blank" rel="noopener noreferrer">ADS 1984 <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>irafctionewcal</code><span>CTIO new calibration</span></div><p>Hamuy et al. (1992), <em>Southern spectrophotometric standards. I</em>, PASP, 104, 533; Hamuy et al. (1994), <em>II</em>, PASP, 106, 566.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1992PASP..104..533H/abstract" target="_blank" rel="noopener noreferrer">ADS 1992 <span aria-hidden="true">↗</span></a><a href="https://ui.adsabs.harvard.edu/abs/1994PASP..106..566H/abstract" target="_blank" rel="noopener noreferrer">ADS 1994 <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>irafiidscal</code><span>KPNO IIDS standards</span></div><p>Various sources transformed to the Hayes–Latham system; unpublished in the catalogue.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1993ASPC...52..173T/abstract" target="_blank" rel="noopener noreferrer">ADS · IRAF <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>irafirscal</code><span>KPNO IRS standards</span></div><p>Various sources transformed to the Hayes–Latham system; unpublished in the catalogue.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1993ASPC...52..173T/abstract" target="_blank" rel="noopener noreferrer">ADS · IRAF <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>irafoke1990</code><span>Oke 1990 standards</span></div><p>Oke (1990), <em>Faint spectrophotometric standard stars</em>, AJ, 99, 1621.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1990AJ.....99.1621O/abstract" target="_blank" rel="noopener noreferrer">ADS abstract <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>irafredcal</code><span>Red calibration</span></div><p>Red extensions from multiple literature sources; no individual source paper specified.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1993ASPC...52..173T/abstract" target="_blank" rel="noopener noreferrer">ADS · IRAF <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>irafspec16cal</code><span>16 Å standards</span></div><p>Hamuy et al. (1992), <em>Southern spectrophotometric standards. I</em>, PASP, 104, 533; Hamuy et al. (1994), <em>II</em>, PASP, 106, 566.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1992PASP..104..533H/abstract" target="_blank" rel="noopener noreferrer">ADS 1992 <span aria-hidden="true">↗</span></a><a href="https://ui.adsabs.harvard.edu/abs/1994PASP..106..566H/abstract" target="_blank" rel="noopener noreferrer">ADS 1994 <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>irafspec50cal</code><span>50 Å standards</span></div><p>Massey et al. (1988), <em>Spectrophotometric standards</em>, ApJ, 328, 315; Massey &amp; Gronwall (1990), <em>Extension to 1 micron</em>, ApJ, 358, 344.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1988ApJ...328..315M/abstract" target="_blank" rel="noopener noreferrer">ADS 1988 <span aria-hidden="true">↗</span></a><a href="https://ui.adsabs.harvard.edu/abs/1990ApJ...358..344M/abstract" target="_blank" rel="noopener noreferrer">ADS 1990 <span aria-hidden="true">↗</span></a></div></article>
+                    <article class="citation-row" role="listitem"><div class="citation-folder"><code>irafspechayescal</code><span>Hayes flux-point standards</span></div><p>Massey et al. (1988), <em>Spectrophotometric standards</em>, ApJ, 328, 315.</p><div class="citation-ads"><a href="https://ui.adsabs.harvard.edu/abs/1988ApJ...328..315M/abstract" target="_blank" rel="noopener noreferrer">ADS abstract <span aria-hidden="true">↗</span></a></div></article>
+                  </div>
+                </section>
+              </div>
+            </section>
+
+            <section class="row g-4 mb-4" id="viewer-layout">
+              <div class="col-xl-8 d-flex flex-column gap-4 viewer-info-column">
+                <section class="dashboard-card" aria-labelledby="explorer-title">
+                  <div class="card-header d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+                    <div><div class="card-kicker">Selection</div><h2 class="card-title" id="explorer-title">Global catalogue search</h2></div>
+                    <span class="badge text-bg-light border" id="catalogue-count">Loading…</span>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-3 align-items-start" id="global-mode-controls">
+                      <div class="col-lg-8">
+                        <label class="form-label" for="global-target-select">Designation</label>
+                        <div class="catalogue-combobox" id="global-target-combobox">
+                          <input class="form-control" id="global-target-select" placeholder="Type or choose a designation" autocomplete="off" aria-autocomplete="list" aria-expanded="false" />
+                          <div class="dropdown-menu catalogue-menu" id="global-target-menu" role="listbox" aria-label="All catalogue designations"></div>
+                        </div>
+                        <div class="form-text">Global search includes aliases from ESO, ING, and IRAF.</div>
+                      </div>
+                      <div class="col-lg-4">
+                        <span class="form-label d-block invisible" aria-hidden="true">Designation</span>
+                        <div class="d-grid"><button class="btn btn-primary" id="global-target-button" type="button">Display target</button></div>
+                      </div>
+                    </div>
+
+                    <div class="row g-3 align-items-start d-none" id="library-mode-controls">
+                      <div class="col-md-5">
+                        <label class="form-label" for="library-select">Subfolder</label>
+                        <select class="form-select" id="library-select"><option value="">Choose a subfolder</option></select>
+                      </div>
+                      <div class="col-md-7">
+                        <label class="form-label" for="spectrum-select">Spectrum</label>
+                        <select class="form-select" id="spectrum-select" disabled><option value="">Choose a spectrum</option></select>
+                        <div class="form-text" id="spectrum-help">Choose a subfolder first.</div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="dashboard-card flex-grow-1" aria-labelledby="target-info-title">
+                  <div class="card-header"><div class="card-kicker">Target details</div><h2 class="card-title" id="target-info-title">No target selected</h2></div>
+                  <div class="card-body" id="target-info">
+                    <p class="muted-copy mb-0">Choose a target or spectrum. Its coordinates, availability, and downloads appear here.</p>
+                  </div>
+                </section>
+              </div>
+              <div class="col-xl-4 viewer-aladin-column">
+                <div class="dashboard-card h-100">
+                  <div class="card-header d-flex justify-content-between align-items-center"><div><div class="card-kicker">Sky location</div><h2 class="card-title">Aladin Lite</h2></div><span class="badge text-bg-light border">J2000</span></div>
+                  <div class="card-body"><div class="aladin-frame"><div id="aladin-lite-div" aria-label="Sky map for selected target"></div></div></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="dashboard-card plot-card" id="plot-section" aria-labelledby="plot-title">
+              <div class="card-header d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                <div><div class="card-kicker">Visualisation</div><h2 class="card-title" id="plot-title">Spectrum display</h2></div>
+                <div class="form-check form-switch m-0">
+                  <input class="form-check-input" type="checkbox" role="switch" id="related-toggle" disabled />
+                  <label class="form-check-label" for="related-toggle">Display all spectra for this target</label>
+                  <div class="form-text" id="related-note">Select a target first.</div>
+                </div>
+              </div>
+              <div class="plot-toolbar p-3">
+                <div class="row g-2 align-items-center">
+                  <div class="col-sm-6 col-lg-auto"><label class="visually-hidden" for="x-unit">X axis</label><select class="form-select form-select-sm" id="x-unit"><option value="angstrom">Wavelength (Å)</option><option value="nanometre">Wavelength (nm)</option><option value="frequency">Frequency (Hz)</option></select></div>
+                  <div class="col-sm-6 col-lg-auto"><label class="visually-hidden" for="y-unit">Y axis</label><select class="form-select form-select-sm" id="y-unit"><option value="wavelength">Flux / wavelength</option><option value="frequency">Flux / frequency</option></select></div>
+                  <div class="col-6 col-lg-auto"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="x-log" /><label class="form-check-label" for="x-log">Log X</label></div></div>
+                  <div class="col-6 col-lg-auto"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="y-log" /><label class="form-check-label" for="y-log">Log Y</label></div></div>
+                  <div class="col-lg ms-lg-auto"><button class="btn btn-sm btn-outline-secondary" id="reset-view" type="button">Reset view</button></div>
+                </div>
+              </div>
+              <p class="alert alert-warning axis-warning" role="status" id="axis-warning"></p>
+              <div class="plot-wrapper">
+                <div id="plotly-chart" aria-label="Spectrum plot"></div>
+                <div class="chart-state" id="chart-state">
+                  <div class="chart-state-panel">
+                    <div class="chart-orbit"></div>
+                    <h3 class="h5">Spectrum will appear here</h3>
+                    <p class="muted-copy mb-0">Choose a target with global search, or pick a provider subfolder and spectrum above.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <footer class="app-footer d-flex flex-column flex-md-row align-items-md-center gap-2 pt-4 pb-2">
+              <span>Data from the ESO, ING, and IRAF catalogues. If this tool is useful, please cite <a href="https://zenodo.org/record/7978970">its DOI</a>.</span>
+              <iframe src="https://ghbtns.com/github-btn.html?user=cylammarco&amp;repo=SpectroscopicStandards&amp;type=star&amp;count=true" frameborder="0" scrolling="0" width="150" height="20" title="Star SpectroscopicStandards on GitHub" loading="lazy"></iframe>
+            </footer>
+          </main>
         </div>
-
-        <!-- Right hand side display panel -->
-
-        <div class="col-9">
-          <div class="row"></div>
-
-          <div id="plotly-chart"></div>
-
-          <div class="row"></div>
-        </div>
       </div>
-
-      <!-- Footer -->
-      <div class="row fixed-row-bottom bg-dark text-white py-4 px-4">
-        <p>
-          Data are available from: <a href="https://eso.org/sci/observing/tools/standards.html">ESO</a>,
-          <a href="https://www.ing.iac.es//Astronomy/observing/manuals/html_manuals/tech_notes/tn065-100/workflux.html">ING</a>
-          and <a href="https://github.com/iraf-community/iraf/tree/main/noao/lib/onedstds">iraf</a>.
-          If you have made use of this tool, we would appreciate if you could reference this <a href="https://zenodo.org/record/7978970">DOI</a>.
-          Please give us a star if you like this page: <iframe src="https://ghbtns.com/github-btn.html?user=cylammarco&repo=SpectroscopicStandards&type=star&count=true" frameborder="0" scrolling="0" width="150" height="20" title="GitHub"></iframe></p>
-      </div>
-
     </div>
   </body>
-
-  <!-- script for the aladin widget -->
-  <script type="text/javascript">
-  let aladin;
-  A.init.then(() => {
-    aladin = A.aladin('#aladin-lite-div', {survey: "P/DSS2/color", fov:0.05, projection: "TAN", showProjectionControl: false, target: "0.0, 0.0"});
-  });
-
-    var chart = null;
-    var plotlyDiv = document.getElementById("plotly-chart");
-    var chartOptions = {
-      xaxis: { title: "Wavelength [ A ]" },
-      yaxis: { title: "Flux [ erg / s / cm^2 / A ]", tickformat: ".2e" },
-      width: 1024,
-      height: 768,
-    };
-
-    // Global variable to store the cached JSON data
-    var cachedJsonData = {};
-
-    $(document).ready(function () {
-
-      // Define variables for both JSON file URLs
-      var libFilenameUrl = "designation_to_lib_filename.json";
-      var coordinateUrl = "designation_to_position.json";
-
-      var dropdown1 = $("#dropdown1");
-      dropdown1.append(
-        $("<option></option>").attr("value", "").text("Select a designation")
-      );
-      
-      // Check if the JSON data is already cached
-      if (cachedJsonData[libFilenameUrl] && cachedJsonData[coordinateUrl]) {
-
-        // Populate the dropdown menu with the cached data
-        populateDropdownMenu(cachedJsonData[libFilenameUrl], cachedJsonData[coordinateUrl]);
-
-      } else {
-
-        // Make an AJAX request to fetch the JSON data
-        $.when($.getJSON(libFilenameUrl), $.getJSON(coordinateUrl)).done(function(libFilenameResult, coordinateResult) {
-
-          // Cache the JSON data
-          cachedJsonData[libFilenameUrl] = libFilenameResult[0];
-          cachedJsonData[coordinateUrl] = coordinateResult[0];
-
-          // Populate the dropdown menu with the response
-          populateDropdownMenu(cachedJsonData[libFilenameUrl], cachedJsonData[coordinateUrl]);
-
-        });
-
-      }
-
-      // When the first dropdown is changed, populate the second dropdown with the values for the selected key
-      dropdown1.on("change", function () {
-        var key = $(this).val();
-        var libFilenameValues = cachedJsonData[libFilenameUrl][key];
-        var coordinateValues = cachedJsonData[coordinateUrl][key];
-
-        // Clear the libraries list
-        $("#libraries").empty();
-        $("#coordinates").empty();
-
-        // Clear the plot
-        Plotly.purge("plotly-chart");
-
-        _.forEach(libFilenameValues, function (value, key) {
-          $("#libraries").append(key + "<br>");
-          var libFile = key + "/" + value;
-
-          drawChart(libFile);
-        });
-
-        // Update the #coordinates element with the values from designation_to_position.json
-        var coordinateText = coordinateValues[Object.keys(coordinateValues)[0]];
-        var coordinateElement = $("<div></div>").text(coordinateText);
-        
-        // Add a button element to copy the coordinate value
-        var copyButton = $("<button></button>").text("Copy").click(function () {
-          copyToClipboard(coordinateText);
-        });
-        
-        // Append the button element to the coordinate element
-        coordinateElement.append(copyButton);
-
-        $("#coordinates").append(coordinateElement);
-        aladin.gotoRaDec(coordinateText[0], coordinateText[1]);
-      });
-    });
-
-    function populateDropdownMenu(libFilenameData, coordinateData) {
-
-      // Populate the dropdown with the keys from the JSON file
-      var dropdown1 = $("#dropdown1");
-      dropdown1.select2({
-        data: _.map(Object.keys(libFilenameData).sort(), function(key) {
-          return {
-            id: key,
-            text: key
-          };
-        }),
-        // to allow input text search in the dropdown menu
-        tags: true
-      });
-
-    }
-    
-    // Function to copy the specified text to the clipboard
-    function copyToClipboard(text) {
-      var tempInput = $("<input>");
-      $("body").append(tempInput);
-      tempInput.val(text).select();
-      document.execCommand("copy");
-      tempInput.remove();
-    }
-
-    function drawChart(datFile) {
-      // Get the selected DAT file
-      // For "testing"
-      //var datFile = "ingfg/g138.fg";
-      //var datFile = "ingfg/g138a.fg";
-      //var datFile = "ingmas/f110a.mas";
-      //var datFile = "ingog/bd17.og";
-      //var datFile = "ingog/bd17a.og";
-      //var datFile = "ingoke/bd33.oke";
-      //var datFile = "ingoke/bd33a.oke";
-      //var datFile = "ingoke/f24.oke";
-      //var datFile = "ingsto/f25.sto";
-      //var datFile = "ingsto/f25a.sto";
-      var lib = datFile.split("/")[0];
-      var filename = datFile.split("/")[1];
-      var xData = [];
-      var yData = [];
-
-      if (lib.startsWith("eso")) {
-        filename = "f" + filename;
-      }
-      if (lib.startsWith("eso") | lib.startsWith("iraf")) {
-        extension = "dat";
-      }
-      if (lib == "ingfg") {
-        extension = "fg";
-      }
-      if (lib == "ingmas") {
-        extension = "mas";
-      }
-      if (lib == "ingog") {
-        extension = "og";
-      }
-      if (lib == "ingoke") {
-        extension = "oke";
-      }
-      if (lib == "ingsto") {
-        extension = "sto";
-      }
-
-      if (["h102", "g157", "g24"].includes(filename)) {
-        filename = filename + "a";
-      }
-
-      datFile = lib + "/" + filename + "." + extension;
-
-      // Load the DAT file
-      fetch(datFile)
-        .then(function (response) {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.text();
-        })
-        .then(function (text) {
-          // Parse the space-separated file
-          var rows = text.split("\n");
-
-          for (var i = 0; i < rows.length - 1; i++) {
-            // 1 - remove leading space
-            // 2 - split by space
-            // 3 - get only first two items
-            // 4 - parse as float
-            if (
-              rows[i].startsWith("#") |
-              rows[i].startsWith("*") |
-              rows[i].startsWith("SET")
-            ) {
-              continue;
-            }
-            var cells = rows[i]
-              .replace(/^\s+/g, "")
-              .split(/\s+/)
-              .slice(0, 2)
-              .map(function (x) {
-                return parseFloat(x);
-              });
-            if (isNaN(cells.slice(0, 1))) {
-              continue;
-            }
-            var lib = datFile.split("/")[0];
-            var [filename, extension] = datFile.split("/")[1].split(".");
-            if (lib == "esoxshooter") {
-              // Do nothing
-            } else if (lib.startsWith("eso")) {
-              cells[1] *= 1e-16;
-            } else if (lib.startsWith("iraf")) {
-              cells[1] =
-                (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
-                3.33564095e4 /
-                cells[0] ** 2;
-            } else if (lib.startsWith("ing")) {
-              // for fg
-              if (extension == "fg") {
-                if (filename.endsWith("a")) {
-                  cells[1] =
-                    (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
-                    3.33564095e4 /
-                    cells[0] ** 2;
-                } else if (filename == "gd248") {
-                  cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
-                } else {
-                  cells[1] *= (1e-6 * 2.99792458e-5) / cells[0] ** 2;
-                }
-              }
-
-              // for mas
-              if (extension == "mas") {
-                cells[1] =
-                  (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
-                  3.33564095e4 /
-                  cells[0] ** 2;
-              }
-
-              // for og
-              if (extension == "og") {
-                if (filename.endsWith("a")) {
-                  cells[1] =
-                    (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
-                    3.33564095e4 /
-                    cells[0] ** 2;
-                } else {
-                  if (["bd17", "hd194"].includes(filename)) {
-                    // milli Jy
-                    cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
-                  } else {
-                    // micro Jy
-                    cells[1] *= (1e-6 * 2.99792458e-5) / cells[0] ** 2;
-                  }
-                }
-              }
-
-              // for oke
-              if (extension == "oke") {
-                if (
-                  filename.endsWith("a") |
-                  filename.endsWith("aold") |
-                  filename.endsWith("anew")
-                ) {
-                  cells[1] =
-                    (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
-                    3.33564095e4 /
-                    cells[0] ** 2;
-                } else {
-                  if (
-                    [
-                      "erib",
-                      "f24",
-                      "g47",
-                      "g99",
-                      "g191old",
-                      "gd140",
-                      "grw73",
-                      "grw705old",
-                      "grw708",
-                      "he3",
-                      "hz2",
-                      "hz7",
-                      "hz14",
-                      "hz29",
-                      "hz43",
-                      "hz44old",
-                      "l745",
-                      "lb227",
-                      "lb1240",
-                      "lds235",
-                      "l870",
-                      "l930",
-                      "l970",
-                      "l1363",
-                      "l1512",
-                      "sa29",
-                      "t573",
-                      "w485",
-                      "w1346",
-                      "r627",
-                      "r640",
-                    ].includes(filename)
-                  ) {
-                    // milli Jy
-                    cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
-                  } else {
-                    // micro Jy
-                    cells[1] *= (1e-6 * 2.99792458e-5) / cells[0] ** 2;
-                  }
-                }
-              }
-
-              // for sto
-              if (extension == "sto") {
-                if (filename.endsWith("a")) {
-                  cells[1] =
-                    (10.0 ** -(cells[1] / 2.5) * 3630.780548) /
-                    3.33564095e4 /
-                    cells[0] ** 2;
-                } else {
-                  // milli Jy
-                  cells[1] *= (1e-3 * 2.99792458e-5) / cells[0] ** 2;
-                }
-              }
-            } // this closes the scope of ING
-            else {
-              // Do Nothing
-            }
-            xData.push(cells[0]);
-            yData.push(cells[1]);
-          } // this closes the scope for reading each row
-
-          var newData = {
-            x: xData,
-            y: yData,
-            type: "scatter",
-            mode: "lines",
-            name: datFile,
-          };
-
-          try {
-            Plotly.addTraces(plotlyDiv, [newData]);
-          } catch (error) {
-            console.log(error);
-            Plotly.newPlot(plotlyDiv, [newData], chartOptions);
-          }
-        })
-        .catch(function (error) {
-          console.error("Error loading DAT file:", error);
-        });
-    }
-  </script>
 </html>
