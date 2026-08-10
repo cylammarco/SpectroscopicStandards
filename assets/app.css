@@ -156,6 +156,7 @@ a { color: var(--ss-primary); }
 }
 .catalogue-menu.show { display: block; }
 .catalogue-menu .dropdown-divider { border-color: var(--ss-border); }
+.catalogue-empty { margin: .45rem .6rem; color: var(--ss-muted); font-size: .8rem; }
 .catalogue-current,
 .catalogue-option {
   display: block;
@@ -250,6 +251,18 @@ a { color: var(--ss-primary); }
 .plot-wrapper { position: relative; min-height: 32rem; }
 #plotly-chart { width: 100%; min-height: 32rem; }
 
+.visibility-card { margin-top: 1.5rem; }
+.visibility-wrapper { min-height: 31rem; border: 1px solid var(--ss-border); border-radius: .35rem; overflow: hidden; background: #fff; }
+#visibility-chart { width: 100%; min-height: 31rem; }
+.visibility-key { display: flex; flex-wrap: wrap; gap: .4rem .65rem; margin-top: 1rem; }
+.visibility-key-item { display: inline-flex; align-items: center; gap: .35rem; color: var(--ss-muted); font-size: .75rem; }
+.visibility-key-item::before { width: .8rem; height: .8rem; content: ""; border: 1px solid rgba(0, 0, 0, .16); border-radius: .15rem; background: currentColor; }
+.visibility-key-item.day::before { background: #262626; }
+.visibility-key-item.civil::before { background: #616161; }
+.visibility-key-item.nautical::before { background: #999; }
+.visibility-key-item.astronomical::before { background: #d1d1d1; }
+.visibility-key-item.night::before { background: #fff; }
+
 .chart-state {
   position: absolute;
   inset: 0;
@@ -341,7 +354,7 @@ a { color: var(--ss-primary); }
   .main-content { padding: 1rem; }
   .topbar { padding: .75rem 1rem; }
   .breadcrumb-trail { display: none; }
-  .plot-card, .plot-wrapper, #plotly-chart { min-height: 26rem; }
+  .plot-card, .plot-wrapper, #plotly-chart, .visibility-wrapper, #visibility-chart { min-height: 26rem; }
   .plot-toolbar .form-select { min-width: 0; }
   .topbar-options { width: 100%; }
   .topbar-select { flex: 1; min-width: 0; }

@@ -4,6 +4,8 @@ SpectroscopicStandards is a browser-based viewer for spectrophotometric standard
 
 The **Sources & citations** tab gives one line per data folder of the relevant publication and links each reference to its NASA ADS abstract.
 
+The **Target visibility** plot is adjusted for the timezone and daylight saving automatically from selected location and date, Although, please be careful with the time on the night of daylight saving.
+
 The webpage generated from the scripts in this repository can be found at:
 <https://cylammarco.github.io/SpectroscopicStandards/>
 
@@ -11,7 +13,7 @@ The webpage generated from the scripts in this repository can be found at:
 
 If you have made use of this tool, we would appreciate if you could reference <https://zenodo.org/record/7978970>.
 
-In version 2 (10 August 2026), we have made use of ChatGPT 5.6 Terra.
+In version 0.2 (10 August 2026), we have made use of ChatGPT 5.6 Terra.
 
 ## Web data
 

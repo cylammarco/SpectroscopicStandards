@@ -4,6 +4,9 @@ const SPEED_OF_LIGHT_ANGSTROM_PER_SECOND = 2.99792458e18;
 const AB_ZERO_POINT_JY = 3630.780548;
 const GROUP_ORDER = ["ESO", "ING", "IRAF"];
 const THEME_STORAGE_KEY = "spectroscopic-standards-theme-v2";
+const OBSERVATORIES = [
+  ["Roque de los Muchachos Observatory (La Palma, Spain)", -17.8816, 28.7606, 2326], ["Teide Observatory (Tenerife, Spain)", -16.4967, 28.2917, 2395], ["Georgian National Astrophysical Observatory (Abastumani, Georgia)", 42.819, 41.75, 1700], ["Abruzzo Astronomical Observatory - TNT (INAF-OA Abruzzo, Italy)", 13.5586, 42.442, 2150], ["Apache Point Observatory (New Mexico, USA)", -105.8203, 32.7804, 2788], ["Aras de los Olmos Observatory (Spain)", -1.1337, 39.645, 1300], ["Asiago Astrophysical Observatory (Italy)", 11.57, 45.843, 1045], ["Assy-Turgen Observatory (Kazakhstan)", 77.878, 43.17, 2750], ["Bohyunsan Optical Astronomy Observatory (Korea)", 128.9766, 36.1648, 1124], ["Brorfelde Observatory (Denmark)", 11.385, 55.625, 90], ["Byurakan Observatory (Armenia)", 44.2737, 40.33, 1500], ["Calar Alto Observatory (Almeria, Spain)", -2.546, 37.2236, 2168], ["Campo Imperatore Observatory (INAF-OA Abruzzo, Italy)", 13.5539, 42.443, 2150], ["Cerro Pachon Observatory (Chile)", -70.7366, -30.2446, 2722], ["Cerro Paranal Observatory (Chile)", -70.4028, -24.6253, 2635], ["Cerro Tololo Observatory (Chile)", -70.806, -30.169, 2200], ["Dominion Astrophysical Observatory (Canada)", -123.417, 48.5217, 229], ["El Leoncito Observatory (Argentina)", -69.295, -31.7992, 2552], ["Fred Lawrence Whipple Observatory (Arizona, USA)", -110.8783, 31.6811, 2606], ["Guillermo Haro Astrophysical Observatory (Sonora, Mexico)", -110.3847, 31.0528, 2486], ["Haute-Provence Observatory (France)", 5.7122, 43.9317, 650], ["Helmos Observatory (Greece)", 22.1961, 37.9844, 2340], ["Iranian National Observatory, Mt. Gargash (Iran)", 51.31, 33.74, 3600], ["Javalambre Astronomical Observatory (Teruel, Spain)", -1.0163, 40.0418, 1956], ["Kitt Peak Observatory (Arizona, USA)", -111.6, 31.9633, 2096], ["Kryoneri Observatory (Greece)", 22.62, 38.137, 930], ["La Luz Observatory (Mexico)", -100.9394, 21.006, 2435], ["La Silla Observatory (Chile)", -70.7345, -29.2567, 2347], ["Large Millimeter Telescope (Mexico)", -97.314, 18.985, 4580], ["Las Campanas Observatory (Chile)", -70.6926, -29.6146, 2386], ["Lick Observatory (California, USA)", -121.6453, 37.3404, 1283], ["Lijiang Observatory (China)", 100.036, 26.6951, 3206], ["Loiano Observatory (Italy)", 11.338, 44.26, 780], ["Lulin Observatory (Taiwan)", 120.8736, 23.4686, 2862], ["Mauna Kea Observatory (Hawaii, USA)", -155.4683, 19.8256, 4215], ["McDonald Observatory (Texas, USA)", -104.0226, 30.671, 2070], ["Montsec Astronomical Observatory (Lleida, Spain)", 0.727, 42.05, 1570], ["Mount Graham International Observatory (Arizona, USA)", -109.892, 32.7013, 3191], ["Mount John Observatory (Tekapo, New Zeland)", 170.4651, -43.984, 1029], ["Mount Kent Observatory (Queensland, Australia)", 151.855, -27.797, 682], ["Mount Lemon Optical Astronomy Observatory (Arizona, USA)", -110.7886, 32.4422, 2776], ["Nanshan Station, Xinjiang Astronomical Observatory (China)", 87.178, 43.47, 2080], ["National Astronomical Observatory Rozhen (Bulgaria)", 24.742, 41.693, 1759], ["Observatoire de la Cote dAzur (France)", 6.9228, 43.7538, 1270], ["Ondrejov Observatory", 14.783, 49.91, 530], ["Palomar Observatory (California, USA)", -116.8648, 33.3563, 1712], ["Pearl Station (Canada)", -68.4, 81.6, 20], ["Pico dos Dias Observatory (Brazil)", -45.58, -22.534, 1864], ["Pine Mountain Observatory (Oregon, USA)", -120.948, 43.79, 1570], ["Piszkesteto Observatory (Hungary)", 19.894, 47.918, 966], ["Rosemary Hill Observatory (Florida, USA)", -82.198, 29.4, 30], ["San Pedro Martir Observatory (Mexico)", -115.462, 31.0442, 2830], ["Santa Martina Observatory (Chile)", -70.534, -33.2696, 1456], ["Seimei Telescope (Japan)", 133.5968, 34.5769, 435], ["Sertao de Itaparica Observatory (Brazil)", -38.6885, -8.7922, 390], ["Siding Spring Observatory (Australia)", 149.0617, -31.2733, 1145], ["Astronomical Observatory of the University of Siena (Italy)", 11.337, 43.313, 306], ["Serra La Nave Observatory (INAF - OA Catania, Italy)", 14.973, 37.7, 1725], ["Sierra Nevada Observatory (Granada, Spain)", -3.3847, 37.0642, 2896], ["Skinakas Observatory (Crete, Greece)", 24.895, 35.213, 1750], ["Sobaeksan Optical Astronomy Observatory (Korea)", 128.4569, 36.9342, 1369], ["Special Astrophysical Observatory (Russia)", 41.4404, 43.6468, 2076], ["Sutherland Observatory (South Africa)", 20.81, -32.38, 1798], ["Tian Shan Observatory (Kazakhstan)", 76.9766, 43.0573, 2730], ["Thai National Observatory, NARI (Thailand)", 98.482, 18.573, 2457], ["Thueringer Landessternwarte Tautenburg (Germany)", 11.711, 50.98, 331], ["Tubitak National Observatory (Turkey)", 30.335, 36.825, 2500], ["Vidojevica Astronomical Station (Serbia)", 21.5557, 43.1462, 1150], ["Virgin Island Robotic Telescope (US Virgin Islands)", -64.354, 18.3506, 420], ["Wendelstein Observatory (Germany)", 12.011, 47.703, 1838], ["Wise Observatory (Israel)", 34.766, 30.595, 875], ["Xinglong Observatory (China)", 117.575, 40.3933, 950], ["Zimmerwald Observatory (Bern, Switzerland)", 7.465, 46.878, 950],
+];
 
 const state = {
   index: null,
@@ -15,6 +18,8 @@ const state = {
   spectrumCache: new Map(),
   requestId: 0,
   aladin: null,
+  visibility: null,
+  visibilityRequest: 0,
 };
 
 const elements = {
@@ -32,7 +37,8 @@ const elements = {
   globalTargetMenu: document.getElementById("global-target-menu"),
   globalTargetButton: document.getElementById("global-target-button"),
   librarySelect: document.getElementById("library-select"),
-  spectrumSelect: document.getElementById("spectrum-select"),
+  libraryTarget: document.getElementById("library-target-select"),
+  libraryTargetMenu: document.getElementById("library-target-menu"),
   spectrumHelp: document.getElementById("spectrum-help"),
   targetTitle: document.getElementById("target-info-title"),
   targetInfo: document.getElementById("target-info"),
@@ -46,6 +52,18 @@ const elements = {
   chart: document.getElementById("plotly-chart"),
   chartState: document.getElementById("chart-state"),
   axisWarning: document.getElementById("axis-warning"),
+  visibilitySection: document.getElementById("visibility-section"),
+  visibilityTarget: document.getElementById("visibility-target"),
+  visibilityObservatory: document.getElementById("visibility-observatory"),
+  visibilityDate: document.getElementById("visibility-date"),
+  visibilityToday: document.getElementById("visibility-today"),
+  visibilityLongitude: document.getElementById("visibility-longitude"),
+  visibilityLatitude: document.getElementById("visibility-latitude"),
+  visibilityElevation: document.getElementById("visibility-elevation"),
+  visibilityRun: document.getElementById("visibility-run"),
+  visibilityMoon: document.getElementById("visibility-moon"),
+  visibilityStatus: document.getElementById("visibility-status"),
+  visibilityChart: document.getElementById("visibility-chart"),
   aladinSurvey: document.getElementById("aladin-survey"),
   themeSelect: document.getElementById("theme-select"),
   sidebar: document.getElementById("app-sidebar"),
@@ -158,11 +176,33 @@ function populateCatalogueMenu(menu) {
     option.textContent = designation;
     list.append(option);
   }
-  menu.replaceChildren(current, divider, list);
+  const empty = document.createElement("p");
+  empty.className = "catalogue-empty";
+  empty.hidden = true;
+  empty.textContent = "No matching targets";
+  menu.replaceChildren(current, divider, list, empty);
   menu.dataset.populated = "true";
 }
 
-function openCatalogueMenu(input, menu) {
+function filterCatalogueMenu(menu, query) {
+  const normalisedQuery = normaliseDesignation(query);
+  let matches = 0;
+  menu.querySelectorAll(".catalogue-option").forEach((option) => {
+    const searchable = option.dataset.search || option.textContent;
+    const visible = !normalisedQuery || normaliseDesignation(searchable).includes(normalisedQuery);
+    option.hidden = !visible;
+    if (visible) matches += 1;
+  });
+  const empty = menu.querySelector(".catalogue-empty");
+  if (empty) empty.hidden = matches > 0;
+}
+
+function selectDisplayedTarget(input, selectedValue) {
+  if (document.activeElement !== input || !selectedValue) return;
+  if (normaliseDesignation(input.value) === normaliseDesignation(selectedValue)) input.select();
+}
+
+function openCatalogueMenu(input, menu, selectCurrentText = false) {
   if (!state.index) return;
   populateCatalogueMenu(menu);
   const entered = normaliseDesignation(input.value);
@@ -177,13 +217,21 @@ function openCatalogueMenu(input, menu) {
     current.disabled = true;
     delete current.dataset.designation;
   }
+  // A selected designation is display state, not a search filter.  Reopening
+  // the menu must therefore show the full catalogue so a different target can
+  // be picked on the first attempt.
+  const query = normaliseDesignation(input.value) === state.selectedDesignation ? "" : input.value;
+  filterCatalogueMenu(menu, query);
   menu.classList.add("show");
   input.setAttribute("aria-expanded", "true");
+  if (selectCurrentText) selectDisplayedTarget(input, state.selectedDesignation);
 }
 
 function closeCatalogueMenus() {
   elements.globalTargetMenu.classList.remove("show");
   elements.globalTarget.setAttribute("aria-expanded", "false");
+  elements.libraryTargetMenu.classList.remove("show");
+  elements.libraryTarget.setAttribute("aria-expanded", "false");
 }
 
 function refreshOpenCatalogueMenus() {
@@ -236,6 +284,7 @@ function updateModeUi() {
   elements.citationsPanel.classList.toggle("d-none", !citationMode);
   elements.viewerLayout.classList.toggle("d-none", citationMode);
   elements.plotSection.classList.toggle("d-none", citationMode);
+  elements.visibilitySection.classList.toggle("d-none", citationMode);
   elements.breadcrumbMode.textContent = citationMode ? "Sources & citations" : libraryMode ? `${state.mode} library` : "Global search";
   elements.explorerTitle.textContent = libraryMode ? `${state.mode}: browse folders` : "Global catalogue search";
   elements.modeIntro.textContent = citationMode
@@ -245,11 +294,19 @@ function updateModeUi() {
       : "Find a target by any known designation, then compare available spectra.";
 }
 
+function clearVisibility() {
+  state.visibility = null;
+  state.visibilityRequest += 1;
+  elements.visibilityTarget.textContent = "No target selected";
+  elements.visibilityStatus.textContent = "Select a target, then update visibility.";
+}
+
 function resetSelection(message = "Choose a target or spectrum to display it.") {
   state.requestId += 1;
   state.selectedDesignation = null;
   state.selectedSpectrum = null;
   state.showRelated = false;
+  clearVisibility();
   elements.relatedToggle.checked = false;
   elements.relatedToggle.disabled = true;
   elements.relatedNote.textContent = "Select a target first.";
@@ -263,8 +320,11 @@ function resetSelection(message = "Choose a target or spectrum to display it.") 
 
 function clearLibraryControls() {
   elements.librarySelect.innerHTML = '<option value="">Choose a subfolder</option>';
-  elements.spectrumSelect.innerHTML = '<option value="">Choose a spectrum</option>';
-  elements.spectrumSelect.disabled = true;
+  elements.libraryTarget.value = "";
+  delete elements.libraryTarget.dataset.selectedSpectrumId;
+  elements.libraryTarget.placeholder = "Choose a subfolder first";
+  elements.libraryTarget.disabled = true;
+  elements.libraryTargetMenu.replaceChildren();
   elements.spectrumHelp.textContent = "Choose a subfolder first.";
 }
 
@@ -283,9 +343,12 @@ function populateLibraryFolders() {
 }
 
 function populateSpectrumSelect(library) {
-  elements.spectrumSelect.innerHTML = '<option value="">Choose a spectrum</option>';
+  elements.libraryTarget.value = "";
+  delete elements.libraryTarget.dataset.selectedSpectrumId;
+  elements.libraryTargetMenu.replaceChildren();
   if (!library) {
-    elements.spectrumSelect.disabled = true;
+    elements.libraryTarget.disabled = true;
+    elements.libraryTarget.placeholder = "Choose a subfolder first";
     elements.spectrumHelp.textContent = "Choose a subfolder first.";
     return;
   }
@@ -293,14 +356,58 @@ function populateSpectrumSelect(library) {
   const fragment = document.createDocumentFragment();
   for (const spectrumId of spectra) {
     const spectrum = state.index.spectra[spectrumId];
-    const option = document.createElement("option");
-    option.value = spectrumId;
-    option.textContent = spectrum.filename;
+    const option = document.createElement("button");
+    option.type = "button";
+    option.className = "catalogue-option";
+    option.dataset.spectrumId = spectrumId;
+    option.dataset.search = [spectrum.filename, ...spectrum.aliases].join(" ");
+    option.textContent = spectrum.aliases[0] ? `${spectrum.filename} · ${spectrum.aliases[0]}` : spectrum.filename;
     fragment.append(option);
   }
-  elements.spectrumSelect.append(fragment);
-  elements.spectrumSelect.disabled = false;
-  elements.spectrumHelp.textContent = `${compactCount(spectra.length)} spectra in this subfolder.`;
+  const empty = document.createElement("p");
+  empty.className = "catalogue-empty";
+  empty.hidden = true;
+  empty.textContent = "No matching targets";
+  elements.libraryTargetMenu.replaceChildren(fragment, empty);
+  elements.libraryTarget.disabled = false;
+  elements.libraryTarget.placeholder = "Search this subfolder";
+  elements.spectrumHelp.textContent = `Search ${compactCount(spectra.length)} targets in this subfolder.`;
+}
+
+function openLibraryTargetMenu(selectCurrentText = false) {
+  if (elements.libraryTarget.disabled) return;
+  const selected = state.index.spectra[elements.libraryTarget.dataset.selectedSpectrumId];
+  const query = selected?.filename === elements.libraryTarget.value ? "" : elements.libraryTarget.value;
+  filterCatalogueMenu(elements.libraryTargetMenu, query);
+  elements.libraryTargetMenu.classList.add("show");
+  elements.libraryTarget.setAttribute("aria-expanded", "true");
+  if (selectCurrentText) selectDisplayedTarget(elements.libraryTarget, selected?.filename);
+}
+
+function selectLibraryTarget(spectrumId) {
+  const spectrum = state.index.spectra[spectrumId];
+  if (!spectrum) return;
+  elements.libraryTarget.classList.remove("is-invalid");
+  elements.libraryTarget.value = spectrum.filename;
+  elements.libraryTarget.dataset.selectedSpectrumId = spectrumId;
+  closeCatalogueMenus();
+  selectSpectrum(spectrumId);
+}
+
+function runLibraryTargetSearch(value) {
+  const query = normaliseDesignation(value ?? elements.libraryTarget.value);
+  const exact = [...elements.libraryTargetMenu.querySelectorAll("[data-spectrum-id]")]
+    .find((option) => {
+      const spectrum = state.index.spectra[option.dataset.spectrumId];
+      return [spectrum.filename, ...spectrum.aliases].some((name) => normaliseDesignation(name) === query);
+    });
+  if (exact) {
+    selectLibraryTarget(exact.dataset.spectrumId);
+    return;
+  }
+  elements.libraryTarget.classList.add("is-invalid");
+  elements.spectrumHelp.textContent = "Choose a target from the filtered list.";
+  openLibraryTargetMenu();
 }
 
 function setMode(mode) {
@@ -377,7 +484,9 @@ function renderTargetInfo() {
       <div class="col-md-5">
         <div class="card-kicker">Equatorial coordinates (J2000)</div>
         <div class="coordinate-value mb-2">${escapeHtml(coordinateText(coordinate))}</div>
-        ${coordinate ? `<button class="btn btn-sm btn-outline-secondary" type="button" data-copy-coordinate="${escapeHtml(coordinateCopy)}">Copy coordinates</button>` : ""}
+        <div class="d-flex flex-wrap gap-2">
+          ${coordinate ? `<button class="btn btn-sm btn-outline-secondary" type="button" data-copy-coordinate="${escapeHtml(coordinateCopy)}">Copy coordinates</button>` : ""}
+        </div>
         <p class="muted-copy mt-3 mb-0">Selected target: <strong>${escapeHtml(target || spectrum.filename)}</strong></p>
       </div>
       <div class="col-md-7">
@@ -405,6 +514,7 @@ function selectDesignation(value) {
     return;
   }
   elements.globalTarget.classList.remove("is-invalid");
+  clearVisibility();
   state.selectedDesignation = designation;
   state.selectedSpectrum = record.spectra[0];
   state.showRelated = false;
@@ -416,6 +526,7 @@ function selectDesignation(value) {
 
 function selectSpectrum(spectrumId) {
   if (!state.index.spectra[spectrumId]) return;
+  clearVisibility();
   state.selectedDesignation = null;
   state.selectedSpectrum = spectrumId;
   state.showRelated = false;
@@ -612,6 +723,84 @@ async function renderPlot() {
   }
 }
 
+function localDateValue(date = new Date()) {
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 10);
+}
+
+function initialiseVisibilityControls() {
+  elements.visibilityDate.value = localDateValue();
+  const options = document.createDocumentFragment();
+  for (const [name] of [...OBSERVATORIES].sort(([left], [right]) => left.localeCompare(right))) {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    options.append(option);
+  }
+  elements.visibilityObservatory.append(options);
+}
+
+function visibilitySettings() {
+  const [year, month, day] = elements.visibilityDate.value.split("-").map(Number);
+  const longitude = Number(elements.visibilityLongitude.value);
+  const latitude = Number(elements.visibilityLatitude.value);
+  const elevation = Number(elements.visibilityElevation.value);
+  if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day)) throw new Error("Choose an observing date.");
+  if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) throw new Error("Longitude must be between −180° and +180°.");
+  if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) throw new Error("Latitude must be between −90° and +90°.");
+  if (!Number.isFinite(elevation) || elevation < -500 || elevation > 10000) throw new Error("Altitude must be between −500 m and 10,000 m.");
+  return {
+    date: elements.visibilityDate.value,
+    year,
+    month,
+    day,
+    longitude,
+    latitude,
+    elevation,
+  };
+}
+
+function renderVisibilityChart(data) {
+  if (!Visibility.renderChart(elements.visibilityChart, data, elements.visibilityMoon.checked)) {
+    elements.visibilityStatus.textContent = "Plotting library is still loading. Try Update visibility again.";
+  }
+}
+
+async function runVisibility() {
+  const request = ++state.visibilityRequest;
+  try {
+    const rawSettings = visibilitySettings();
+    elements.visibilityStatus.textContent = "Resolving timezone from location…";
+    const timeZone = await Visibility.resolveTimeZone(rawSettings);
+    if (request !== state.visibilityRequest) return;
+    const targetName = selectedTarget() || currentSpectrum()?.filename || "Target";
+    const data = Visibility.buildData(Visibility.withTimeZone(rawSettings, timeZone), selectedCoordinate(), targetName);
+    state.visibility = data;
+    elements.visibilityTarget.textContent = data.targetName;
+    renderVisibilityChart(data);
+    const offset = `UTC${data.settings.utcOffset >= 0 ? "+" : ""}${data.settings.utcOffset}`;
+    elements.visibilityStatus.textContent = `${data.settings.timeZone} · ${offset} · derived from location and date.`;
+  } catch (error) {
+    if (request !== state.visibilityRequest) return;
+    elements.visibilityStatus.textContent = error.message;
+  }
+}
+
+function markVisibilityStale() {
+  state.visibilityRequest += 1;
+  if (state.visibility) elements.visibilityStatus.textContent = "Location or date changed. Select Update visibility to recalculate.";
+}
+
+function selectVisibilityObservatory() {
+  const observatory = OBSERVATORIES.find(([name]) => name === elements.visibilityObservatory.value);
+  if (!observatory) return;
+  const [, longitude, latitude, elevation] = observatory;
+  elements.visibilityLongitude.value = longitude;
+  elements.visibilityLatitude.value = latitude;
+  elements.visibilityElevation.value = elevation;
+  markVisibilityStale();
+}
+
 function runGlobalSearch(value) {
   const query = value ?? elements.globalTarget.value;
   const valueToSearch = String(query).trim();
@@ -637,7 +826,6 @@ function bindEvents() {
     if (event.key === "Escape") setMobileSidebar(false);
   });
   elements.globalTargetButton.addEventListener("click", () => runGlobalSearch(elements.globalTarget.value));
-  elements.globalTarget.addEventListener("change", (event) => runGlobalSearch(event.target.value));
   elements.globalTarget.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -645,8 +833,8 @@ function bindEvents() {
     }
   });
   [[elements.globalTarget, elements.globalTargetMenu]].forEach(([input, menu]) => {
-    input.addEventListener("focus", () => openCatalogueMenu(input, menu));
-    input.addEventListener("click", () => openCatalogueMenu(input, menu));
+    input.addEventListener("focus", () => openCatalogueMenu(input, menu, true));
+    input.addEventListener("click", () => openCatalogueMenu(input, menu, true));
     input.addEventListener("input", () => openCatalogueMenu(input, menu));
     menu.addEventListener("click", (event) => {
       const option = event.target.closest("[data-designation]");
@@ -662,7 +850,22 @@ function bindEvents() {
     populateSpectrumSelect(elements.librarySelect.value);
     resetSelection("Choose a spectrum from this subfolder to display it.");
   });
-  elements.spectrumSelect.addEventListener("change", () => selectSpectrum(elements.spectrumSelect.value));
+  elements.libraryTarget.addEventListener("focus", () => openLibraryTargetMenu(true));
+  elements.libraryTarget.addEventListener("click", () => openLibraryTargetMenu(true));
+  elements.libraryTarget.addEventListener("input", () => {
+    elements.libraryTarget.classList.remove("is-invalid");
+    delete elements.libraryTarget.dataset.selectedSpectrumId;
+    openLibraryTargetMenu();
+  });
+  elements.libraryTarget.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    runLibraryTargetSearch(event.currentTarget.value);
+  });
+  elements.libraryTargetMenu.addEventListener("click", (event) => {
+    const option = event.target.closest("[data-spectrum-id]");
+    if (option) selectLibraryTarget(option.dataset.spectrumId);
+  });
   elements.relatedToggle.addEventListener("change", () => {
     state.showRelated = elements.relatedToggle.checked;
     updateAxisControlAvailability();
@@ -672,6 +875,22 @@ function bindEvents() {
   [elements.xUnit, elements.yUnit, elements.xLog, elements.yLog].forEach((control) => control.addEventListener("change", renderPlot));
   elements.resetView.addEventListener("click", () => {
     if (state.selectedSpectrum) renderPlot();
+  });
+  elements.visibilityRun.addEventListener("click", () => runVisibility());
+  elements.visibilityMoon.addEventListener("change", () => {
+    if (state.visibility) renderVisibilityChart(state.visibility);
+  });
+  elements.visibilityObservatory.addEventListener("change", selectVisibilityObservatory);
+  elements.visibilityDate.addEventListener("input", markVisibilityStale);
+  elements.visibilityToday.addEventListener("click", () => {
+    elements.visibilityDate.value = localDateValue();
+    markVisibilityStale();
+  });
+  [elements.visibilityLongitude, elements.visibilityLatitude, elements.visibilityElevation].forEach((control) => {
+    control.addEventListener("input", () => {
+      elements.visibilityObservatory.value = "";
+      markVisibilityStale();
+    });
   });
   elements.themeSelect.addEventListener("change", () => {
     setTheme(elements.themeSelect.value);
@@ -700,6 +919,7 @@ function bindEvents() {
 
 async function initialise() {
   restoreTheme();
+  initialiseVisibilityControls();
   bindEvents();
   initAladin();
   try {

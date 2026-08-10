@@ -16,6 +16,7 @@
     </script>
     <script defer src="https://cdn.plot.ly/plotly-basic-2.35.3.min.js"></script>
     <script defer src="https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js" charset="utf-8"></script>
+    <script defer src="assets/visibility.js"></script>
     <script defer src="assets/app.js"></script>
   </head>
   <body>
@@ -145,8 +146,11 @@
                         <select class="form-select" id="library-select"><option value="">Choose a subfolder</option></select>
                       </div>
                       <div class="col-md-7">
-                        <label class="form-label" for="spectrum-select">Spectrum</label>
-                        <select class="form-select" id="spectrum-select" disabled><option value="">Choose a spectrum</option></select>
+                        <label class="form-label" for="library-target-select">Target</label>
+                        <div class="catalogue-combobox" id="library-target-combobox">
+                          <input class="form-control" id="library-target-select" placeholder="Choose a subfolder first" autocomplete="off" aria-autocomplete="list" aria-expanded="false" disabled />
+                          <div class="dropdown-menu catalogue-menu" id="library-target-menu" role="listbox" aria-label="Spectra in the selected subfolder"></div>
+                        </div>
                         <div class="form-text" id="spectrum-help">Choose a subfolder first.</div>
                       </div>
                     </div>
@@ -196,6 +200,30 @@
                     <p class="muted-copy mb-0">Choose a target with global search, or pick a provider subfolder and spectrum above.</p>
                   </div>
                 </div>
+              </div>
+            </section>
+
+            <section class="dashboard-card visibility-card" id="visibility-section" aria-labelledby="visibility-title">
+              <div class="card-header d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+                <div><div class="card-kicker">Observing plan</div><h2 class="card-title" id="visibility-title">Target visibility</h2></div>
+                <span class="badge text-bg-light border" id="visibility-target">No target selected</span>
+              </div>
+              <div class="card-body">
+                <p class="page-subtitle mb-3">Choose an observatory or enter custom coordinates. Timezone, including daylight saving, is determined from location and date. Coordinates use east-positive longitude and north-positive latitude.</p>
+                <div class="row g-3 align-items-end">
+                  <div class="col-12 col-lg-4"><label class="form-label" for="visibility-observatory">Preset observatories</label><select class="form-select" id="visibility-observatory"><option value="">Custom coordinates</option></select></div>
+                  <div class="col-sm-6 col-lg-2"><div class="d-flex align-items-center justify-content-between gap-2"><label class="form-label mb-1" for="visibility-date">Local date</label><button class="btn btn-sm btn-outline-secondary mb-1" id="visibility-today" type="button">Today</button></div><input class="form-control" id="visibility-date" type="date" required /></div>
+                  <div class="col-sm-6 col-lg-2"><label class="form-label" for="visibility-longitude">Longitude (°)</label><input class="form-control" id="visibility-longitude" type="number" value="0" min="-180" max="180" step="0.0001" required /></div>
+                  <div class="col-sm-6 col-lg-2"><label class="form-label" for="visibility-latitude">Latitude (°)</label><input class="form-control" id="visibility-latitude" type="number" value="0" min="-90" max="90" step="0.0001" required /></div>
+                  <div class="col-sm-6 col-lg-2"><label class="form-label" for="visibility-elevation">Altitude (m)</label><input class="form-control" id="visibility-elevation" type="number" value="0" min="-500" max="10000" step="1" required /></div>
+                  <div class="col-sm-6 col-lg-2 d-grid"><button class="btn btn-primary" id="visibility-run" type="button">Update visibility</button></div>
+                </div>
+                <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3 mt-3">
+                  <div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" role="switch" id="visibility-moon" /><label class="form-check-label" for="visibility-moon">Show Moon track and separation</label></div>
+                  <p class="form-text m-0" id="visibility-status" role="status">Select a target, then update visibility.</p>
+                </div>
+                <div class="visibility-key" aria-label="Sky brightness key"><span class="visibility-key-item day">Day</span><span class="visibility-key-item civil">Civil twilight</span><span class="visibility-key-item nautical">Nautical twilight</span><span class="visibility-key-item astronomical">Astronomical twilight</span><span class="visibility-key-item night">Night</span></div>
+                <div class="visibility-wrapper mt-3"><div id="visibility-chart" aria-label="Target altitude and visibility chart"></div></div>
               </div>
             </section>
 
