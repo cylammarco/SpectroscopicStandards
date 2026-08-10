@@ -1,5 +1,28 @@
 "use strict";
 
+/*
+ * Visibility calculation references
+ *
+ * - T. C. van Flandern & K. F. Pulkkinen (1979), "Low-Precision Formulae
+ *   for Planetary Positions", ApJS, 41, 391–411, doi:10.1086/190623:
+ *   https://ui.adsabs.harvard.edu/abs/1979ApJS...41..391V/abstract
+ * - Paul Schlyter, "How to compute planetary positions" (the direct source
+ *   for the simplified Sun/Moon orbital elements used below):
+ *   https://www.stjarnhimlen.se/comp/ppcomp.html
+ * - J. Meeus, Astronomical Algorithms, 2nd ed. (1998), ISBN 9780943396613.
+ * - U.S. Naval Observatory, altitude/azimuth and twilight definitions:
+ *   https://aa.usno.navy.mil/faq/alt_az
+ *   https://aa.usno.navy.mil/faq/RST_defs
+ * - Bowditch, The American Practical Navigator, horizon-dip formula:
+ *   https://thenauticalalmanac.com/2019_Bowditch-_American_Practical_Navigator/Volume-_1/13-%20Appendices/Appendix%20B-%20Calculations%20and%20Conversions.pdf
+ * - airmass.org, altitude and plane-parallel airmass notes:
+ *   https://airmass.org/notes
+ * - Open-Meteo API, coordinate-to-timezone lookup:
+ *   https://open-meteo.com/en/docs
+ *
+ * This is a rough observing planner, not a precision ephemeris.
+ */
+
 window.Visibility = (() => {
   const DEGREE = Math.PI / 180;
 
@@ -28,6 +51,7 @@ window.Visibility = (() => {
   }
 
   function greenwichSiderealDegrees(date) {
+    // Meeus GMST approximation: see reference block above.
     const jd = julianDate(date);
     const centuries = (jd - 2451545.0) / 36525;
     return normaliseDegrees(280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * centuries ** 2 - centuries ** 3 / 38710000);
@@ -47,6 +71,7 @@ window.Visibility = (() => {
   }
 
   function equatorialFromEcliptic(longitude, latitude, days) {
+    // Schlyter's simplified ecliptic-to-equatorial conversion and obliquity.
     const obliquity = radians(23.4393 - 3.563e-7 * days);
     const eclipticLongitude = radians(longitude);
     const eclipticLatitude = radians(latitude);
@@ -68,6 +93,7 @@ window.Visibility = (() => {
   }
 
   function solarCoordinates(date) {
+    // Schlyter / van Flandern & Pulkkinen low-precision Sun elements.
     const days = julianDate(date) - 2451543.5;
     const perihelion = 282.9404 + 4.70935e-5 * days;
     const eccentricity = 0.016709 - 1.151e-9 * days;
@@ -79,6 +105,10 @@ window.Visibility = (() => {
   }
 
   function lunarCoordinates(date) {
+    // Schlyter / van Flandern & Pulkkinen low-precision Moon elements.
+    // Deliberately geocentric: no topocentric lunar parallax correction.
+    // Moon perturbation terms are also omitted; Schlyter notes that better than
+    // about 2° lunar accuracy requires adding them, so separation is approximate.
     const days = julianDate(date) - 2451543.5;
     const ascendingNode = normaliseDegrees(125.1228 - 0.0529538083 * days);
     const inclination = 5.1454;
@@ -103,6 +133,8 @@ window.Visibility = (() => {
   }
 
   function altitudeDegrees(coordinates, date, longitude, latitude) {
+    // Spherical-trigonometry altitude equation from the USNO reference above.
+    // No atmospheric-refraction correction is applied.
     const hourAngle = radians(normaliseDegrees(greenwichSiderealDegrees(date) + longitude - coordinates.ra + 180) - 180);
     const observerLatitude = radians(latitude);
     const declination = radians(coordinates.dec);
@@ -110,6 +142,7 @@ window.Visibility = (() => {
   }
 
   function angularDistanceDegrees(first, second) {
+    // Spherical law of cosines for angular separation.
     const firstDeclination = radians(first.dec);
     const secondDeclination = radians(second.dec);
     const deltaRightAscension = radians(first.ra - second.ra);
@@ -117,6 +150,7 @@ window.Visibility = (() => {
   }
 
   function twilightDetails(solarAltitude) {
+    // USNO geometric Sun-centre limits: civil −6°, nautical −12°, astronomical −18°.
     if (solarAltitude >= 0) return { label: "Day", shade: "#242424" };
     if (solarAltitude >= -6) return { label: "Civil twilight", shade: "#5d5d5d" };
     if (solarAltitude >= -12) return { label: "Nautical twilight", shade: "#999999" };
@@ -125,6 +159,9 @@ window.Visibility = (() => {
   }
 
   function observerHorizonDegrees(elevation) {
+    // Bowditch visible-horizon dip: −1.76 arcmin × sqrt(height in metres).
+    // This treats observatory elevation as an unobstructed horizon height;
+    // real terrain, domes, and a measured horizon mask are not represented.
     return -0.0293 * Math.sqrt(Math.max(0, elevation));
   }
 
@@ -138,6 +175,8 @@ window.Visibility = (() => {
   }
 
   async function resolveTimeZone(settings) {
+    // Open-Meteo maps the supplied coordinates to an IANA timezone. Browser Intl
+    // then obtains the date-specific UTC offset, including daylight saving time.
     const url = new URL("https://api.open-meteo.com/v1/forecast");
     url.search = new URLSearchParams({ latitude: String(settings.latitude), longitude: String(settings.longitude), timezone: "auto", forecast_days: "1" });
     const response = await fetch(url);
@@ -159,6 +198,8 @@ window.Visibility = (() => {
   }
 
   function buildData(settings, coordinate, targetName) {
+    // Input catalogue coordinates are J2000. Proper motion and precession to the
+    // observing date are not applied, so this remains a planning approximation.
     if (!coordinate || (coordinate[0] === 0 && coordinate[1] === 0)) throw new Error("This target has no usable sky coordinate.");
     const target = { ra: coordinate[0], dec: coordinate[1] };
     const points = [];
@@ -212,6 +253,8 @@ window.Visibility = (() => {
   }
 
   function airmassAxis(range) {
+    // User-selected plane-parallel approximation: X = sec(z) = 1 / cos(z).
+    // It becomes inaccurate near the horizon; airmass.org documents improved models.
     const masses = [1, 1.1, 1.25, 1.5, 2, 3, 4, 5, 10];
     return {
       title: "Airmass (1 / cos z)",
