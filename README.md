@@ -11,6 +11,8 @@ The webpage generated from the scripts in this repository can be found at:
 
 If you have made use of this tool, we would appreciate if you could reference <https://zenodo.org/record/7978970>.
 
+In version 2 (10 August 2026), we have made use of ChatGPT 5.6 Terra.
+
 ## Web data
 
 The viewer uses `spectra-index.json` for designation, provider, coordinate, and

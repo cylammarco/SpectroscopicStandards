@@ -21,10 +21,14 @@
   <body>
     <div class="container-fluid p-0 app-shell">
       <div class="row g-0">
-        <aside class="col-12 col-lg-2 app-sidebar">
+        <aside class="col-12 col-lg-2 app-sidebar" id="app-sidebar">
           <a class="brand" href="./" aria-label="Spectroscopic Standards home">
             <span><small>Catalogue viewer</small><strong>Spectroscopic<br />Standards</strong></span>
           </a>
+          <div class="mobile-sidebar-actions d-lg-none">
+            <span>Catalogue navigation</span>
+            <button class="btn btn-sm" id="sidebar-close" type="button" aria-label="Close navigation">Close</button>
+          </div>
           <div class="sidebar-body">
             <p class="nav-caption">Explore spectra</p>
             <nav class="nav mode-nav flex-lg-column" aria-label="Catalogue modes">
@@ -41,9 +45,11 @@
             </div>
           </div>
         </aside>
+        <button class="sidebar-backdrop d-lg-none" id="sidebar-backdrop" type="button" aria-label="Close navigation" tabindex="-1"></button>
 
         <div class="col app-main">
           <header class="topbar d-flex flex-column flex-xl-row align-items-xl-center gap-3 px-3 px-md-4 py-3">
+            <button class="mobile-nav-toggle d-lg-none" id="sidebar-toggle" type="button" aria-controls="app-sidebar" aria-expanded="false"><span aria-hidden="true">☰</span><span>Browse libraries</span></button>
             <nav class="breadcrumb-trail" aria-label="Breadcrumb">
               <span>Spectra</span><span class="breadcrumb-arrow" aria-hidden="true">&gt;</span><span id="breadcrumb-mode" aria-current="page">Global search</span>
             </nav>

@@ -48,6 +48,10 @@ const elements = {
   axisWarning: document.getElementById("axis-warning"),
   aladinSurvey: document.getElementById("aladin-survey"),
   themeSelect: document.getElementById("theme-select"),
+  sidebar: document.getElementById("app-sidebar"),
+  sidebarToggle: document.getElementById("sidebar-toggle"),
+  sidebarClose: document.getElementById("sidebar-close"),
+  sidebarBackdrop: document.getElementById("sidebar-backdrop"),
 };
 
 function escapeHtml(value) {
@@ -58,6 +62,13 @@ function escapeHtml(value) {
 
 function normaliseDesignation(value) {
   return String(value || "").trim().toLowerCase().replace(/\s+/g, "");
+}
+
+function setMobileSidebar(open) {
+  const isMobile = window.matchMedia("(max-width: 991.98px)").matches;
+  const isOpen = Boolean(open && isMobile);
+  document.body.classList.toggle("sidebar-open", isOpen);
+  elements.sidebarToggle?.setAttribute("aria-expanded", String(isOpen));
 }
 
 function compactCount(value) {
@@ -334,11 +345,17 @@ function coordinateText(coordinate) {
   return `RA ${coordinate[0].toFixed(6)}°, Dec ${coordinate[1].toFixed(6)}°`;
 }
 
-function sourceNameLink(spectrum, isCurrent) {
+function simbadUrl(identifier) {
+  return `https://simbad.u-strasbg.fr/simbad/sim-basic?Ident=${encodeURIComponent(identifier)}&submit=SIMBAD+search`;
+}
+
+function sourceNameLink(spectrum, isCurrent, target) {
   const library = state.index.libraries[spectrum.library];
+  const objectName = target || spectrum.target || spectrum.aliases?.[0] || spectrum.filename;
   return `<div class="source-name-row${isCurrent ? " is-current" : ""}">
     <a class="source-name" href="#plotly-chart" data-spectrum-id="${escapeHtml(spectrum.id)}" title="Display ${escapeHtml(spectrum.file)}">${escapeHtml(spectrum.filename)}</a>
     <span class="source-library">${escapeHtml(spectrum.group)} · ${escapeHtml(library.label)}</span>
+    <a class="source-simbad" href="${escapeHtml(simbadUrl(objectName))}" target="_blank" rel="noopener noreferrer" title="Open ${escapeHtml(objectName)} in SIMBAD">SIMBAD ↗</a>
     <a class="source-download" href="${escapeHtml(spectrum.file)}" download title="Download ${escapeHtml(spectrum.file)}">download ↓</a>
   </div>`;
 }
@@ -365,7 +382,7 @@ function renderTargetInfo() {
       </div>
       <div class="col-md-7">
         <div class="card-kicker">Available source names and libraries</div>
-        <div class="source-name-list">${orderedRelated.map((item) => sourceNameLink(item, item.id === spectrum.id)).join("")}</div>
+        <div class="source-name-list">${orderedRelated.map((item) => sourceNameLink(item, item.id === spectrum.id, target)).join("")}</div>
         <p class="muted-copy mt-3 mb-0">${related.length} file${related.length === 1 ? "" : "s"} across ${providerGroups.join(", ") || spectrum.group}. Select a name to display it; download links preserve original source files.</p>
       </div>
     </div>`;
@@ -605,7 +622,19 @@ function runGlobalSearch(value) {
 
 function bindEvents() {
   document.querySelectorAll("[data-mode]").forEach((button) => {
-    button.addEventListener("click", () => setMode(button.dataset.mode));
+    button.addEventListener("click", () => {
+      setMode(button.dataset.mode);
+      setMobileSidebar(false);
+    });
+  });
+  elements.sidebarToggle?.addEventListener("click", () => setMobileSidebar(!document.body.classList.contains("sidebar-open")));
+  elements.sidebarClose?.addEventListener("click", () => setMobileSidebar(false));
+  elements.sidebarBackdrop?.addEventListener("click", () => setMobileSidebar(false));
+  window.addEventListener("resize", () => {
+    if (!window.matchMedia("(max-width: 991.98px)").matches) setMobileSidebar(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setMobileSidebar(false);
   });
   elements.globalTargetButton.addEventListener("click", () => runGlobalSearch(elements.globalTarget.value));
   elements.globalTarget.addEventListener("change", (event) => runGlobalSearch(event.target.value));
