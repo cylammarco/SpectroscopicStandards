@@ -23,6 +23,12 @@ The browser starts catalogue loading before the optional Plotly and Aladin
 third-party scripts finish downloading, so catalogue search is not delayed by
 those visualisation services.
 
+Aladin Lite is pinned to version 3.8.2 through jsDelivr, with unpkg as a
+runtime fallback. The package is ESM-only, so
+[`assets/aladin-loader.js`](assets/aladin-loader.js) exposes its default export
+as the browser global used by the viewer. This avoids depending on the CDS
+`latest` endpoint during viewer startup.
+
 When changing source files or aliases, first regenerate the two committed metadata inputs:
 
 ```bash
