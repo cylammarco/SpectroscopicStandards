@@ -4,6 +4,11 @@ const SPEED_OF_LIGHT_ANGSTROM_PER_SECOND = 2.99792458e18;
 const AB_ZERO_POINT_JY = 3630.780548;
 const GROUP_ORDER = ["ESO", "ING", "IRAF", "STScI"];
 const THEME_STORAGE_KEY = "spectroscopic-standards-theme-v2";
+const DESIGNATION_COLLATOR = new Intl.Collator("en-GB", {
+  numeric: true,
+  sensitivity: "base",
+  ignorePunctuation: true,
+});
 const OBSERVATORIES = [
   ["Roque de los Muchachos Observatory (La Palma, Spain)", -17.8816, 28.7606, 2326], ["Teide Observatory (Tenerife, Spain)", -16.4967, 28.2917, 2395], ["Georgian National Astrophysical Observatory (Abastumani, Georgia)", 42.819, 41.75, 1700], ["Abruzzo Astronomical Observatory - TNT (INAF-OA Abruzzo, Italy)", 13.5586, 42.442, 2150], ["Apache Point Observatory (New Mexico, USA)", -105.8203, 32.7804, 2788], ["Aras de los Olmos Observatory (Spain)", -1.1337, 39.645, 1300], ["Asiago Astrophysical Observatory (Italy)", 11.57, 45.843, 1045], ["Assy-Turgen Observatory (Kazakhstan)", 77.878, 43.17, 2750], ["Bohyunsan Optical Astronomy Observatory (Korea)", 128.9766, 36.1648, 1124], ["Brorfelde Observatory (Denmark)", 11.385, 55.625, 90], ["Byurakan Observatory (Armenia)", 44.2737, 40.33, 1500], ["Calar Alto Observatory (Almeria, Spain)", -2.546, 37.2236, 2168], ["Campo Imperatore Observatory (INAF-OA Abruzzo, Italy)", 13.5539, 42.443, 2150], ["Cerro Pachon Observatory (Chile)", -70.7366, -30.2446, 2722], ["Cerro Paranal Observatory (Chile)", -70.4028, -24.6253, 2635], ["Cerro Tololo Observatory (Chile)", -70.806, -30.169, 2200], ["Dominion Astrophysical Observatory (Canada)", -123.417, 48.5217, 229], ["El Leoncito Observatory (Argentina)", -69.295, -31.7992, 2552], ["Fred Lawrence Whipple Observatory (Arizona, USA)", -110.8783, 31.6811, 2606], ["Guillermo Haro Astrophysical Observatory (Sonora, Mexico)", -110.3847, 31.0528, 2486], ["Haute-Provence Observatory (France)", 5.7122, 43.9317, 650], ["Helmos Observatory (Greece)", 22.1961, 37.9844, 2340], ["Iranian National Observatory, Mt. Gargash (Iran)", 51.31, 33.74, 3600], ["Javalambre Astronomical Observatory (Teruel, Spain)", -1.0163, 40.0418, 1956], ["Kitt Peak Observatory (Arizona, USA)", -111.6, 31.9633, 2096], ["Kryoneri Observatory (Greece)", 22.62, 38.137, 930], ["La Luz Observatory (Mexico)", -100.9394, 21.006, 2435], ["La Silla Observatory (Chile)", -70.7345, -29.2567, 2347], ["Large Millimeter Telescope (Mexico)", -97.314, 18.985, 4580], ["Las Campanas Observatory (Chile)", -70.6926, -29.6146, 2386], ["Lick Observatory (California, USA)", -121.6453, 37.3404, 1283], ["Lijiang Observatory (China)", 100.036, 26.6951, 3206], ["Loiano Observatory (Italy)", 11.338, 44.26, 780], ["Lulin Observatory (Taiwan)", 120.8736, 23.4686, 2862], ["Mauna Kea Observatory (Hawaii, USA)", -155.4683, 19.8256, 4215], ["McDonald Observatory (Texas, USA)", -104.0226, 30.671, 2070], ["Montsec Astronomical Observatory (Lleida, Spain)", 0.727, 42.05, 1570], ["Mount Graham International Observatory (Arizona, USA)", -109.892, 32.7013, 3191], ["Mount John Observatory (Tekapo, New Zeland)", 170.4651, -43.984, 1029], ["Mount Kent Observatory (Queensland, Australia)", 151.855, -27.797, 682], ["Mount Lemon Optical Astronomy Observatory (Arizona, USA)", -110.7886, 32.4422, 2776], ["Nanshan Station, Xinjiang Astronomical Observatory (China)", 87.178, 43.47, 2080], ["National Astronomical Observatory Rozhen (Bulgaria)", 24.742, 41.693, 1759], ["Observatoire de la Cote dAzur (France)", 6.9228, 43.7538, 1270], ["Ondrejov Observatory", 14.783, 49.91, 530], ["Palomar Observatory (California, USA)", -116.8648, 33.3563, 1712], ["Pearl Station (Canada)", -68.4, 81.6, 20], ["Pico dos Dias Observatory (Brazil)", -45.58, -22.534, 1864], ["Pine Mountain Observatory (Oregon, USA)", -120.948, 43.79, 1570], ["Piszkesteto Observatory (Hungary)", 19.894, 47.918, 966], ["Rosemary Hill Observatory (Florida, USA)", -82.198, 29.4, 30], ["San Pedro Martir Observatory (Mexico)", -115.462, 31.0442, 2830], ["Santa Martina Observatory (Chile)", -70.534, -33.2696, 1456], ["Seimei Telescope (Japan)", 133.5968, 34.5769, 435], ["Sertao de Itaparica Observatory (Brazil)", -38.6885, -8.7922, 390], ["Siding Spring Observatory (Australia)", 149.0617, -31.2733, 1145], ["Astronomical Observatory of the University of Siena (Italy)", 11.337, 43.313, 306], ["Serra La Nave Observatory (INAF - OA Catania, Italy)", 14.973, 37.7, 1725], ["Sierra Nevada Observatory (Granada, Spain)", -3.3847, 37.0642, 2896], ["Skinakas Observatory (Crete, Greece)", 24.895, 35.213, 1750], ["Sobaeksan Optical Astronomy Observatory (Korea)", 128.4569, 36.9342, 1369], ["Special Astrophysical Observatory (Russia)", 41.4404, 43.6468, 2076], ["Sutherland Observatory (South Africa)", 20.81, -32.38, 1798], ["Tian Shan Observatory (Kazakhstan)", 76.9766, 43.0573, 2730], ["Thai National Observatory, NARI (Thailand)", 98.482, 18.573, 2457], ["Thueringer Landessternwarte Tautenburg (Germany)", 11.711, 50.98, 331], ["Tubitak National Observatory (Turkey)", 30.335, 36.825, 2500], ["Vidojevica Astronomical Station (Serbia)", 21.5557, 43.1462, 1150], ["Virgin Island Robotic Telescope (US Virgin Islands)", -64.354, 18.3506, 420], ["Wendelstein Observatory (Germany)", 12.011, 47.703, 1838], ["Wise Observatory (Israel)", 34.766, 30.595, 875], ["Xinglong Observatory (China)", 117.575, 40.3933, 950], ["Zimmerwald Observatory (Bern, Switzerland)", 7.465, 46.878, 950],
 ];
@@ -142,11 +147,7 @@ async function loadIndex() {
 }
 
 function populateDesignations() {
-  state.designations = Object.keys(state.index.designations).sort((first, second) => first.localeCompare(second, "en-GB", {
-    numeric: true,
-    sensitivity: "base",
-    ignorePunctuation: true,
-  }));
+  state.designations = Object.keys(state.index.designations).sort(DESIGNATION_COLLATOR.compare);
   elements.catalogueCount.textContent = `${compactCount(state.designations.length)} designations`;
 }
 
@@ -230,7 +231,7 @@ function refreshOpenCatalogueMenus() {
 }
 
 function initAladin() {
-  if (!window.A?.init) return;
+  if (!window.A?.init || state.aladin) return;
   window.A.init.then(() => {
     state.aladin = window.A.aladin("#aladin-lite-div", {
       survey: elements.aladinSurvey.value,
@@ -679,6 +680,10 @@ async function renderPlot() {
       if (window.Plotly) window.Plotly.purge(elements.chart);
       return;
     }
+    if (!window.Plotly) {
+      showChartState("Visualisation is loading", "The plotting library is still loading. Try again shortly.");
+      return;
+    }
 
     const first = usable[0];
     const layout = {
@@ -927,5 +932,10 @@ async function initialise() {
     showChartState("Catalogue could not load", "Reload page after checking the network connection.");
   }
 }
+
+window.addEventListener("aladinready", initAladin);
+window.addEventListener("plotlyready", () => {
+  if (state.selectedSpectrum) renderPlot();
+});
 
 initialise();

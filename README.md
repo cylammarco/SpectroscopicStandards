@@ -19,6 +19,10 @@ The viewer uses `spectra-index.json` for designation, provider, coordinate, and
 download metadata. It is built directly from each file's aliases, so multiple
 spectra in one provider folder are retained for comparison.
 
+The browser starts catalogue loading before the optional Plotly and Aladin
+third-party scripts finish downloading, so catalogue search is not delayed by
+those visualisation services.
+
 When changing source files or aliases, first regenerate the two committed metadata inputs:
 
 ```bash

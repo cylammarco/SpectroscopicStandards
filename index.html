@@ -14,10 +14,10 @@
       gtag('js', new Date());
       gtag('config', 'G-L8GGC29J2H');
     </script>
-    <script defer src="https://cdn.plot.ly/plotly-basic-2.35.3.min.js"></script>
-    <script defer src="https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js" charset="utf-8"></script>
-    <script defer src="assets/visibility.js"></script>
     <script defer src="assets/app.js"></script>
+    <script defer src="https://cdn.plot.ly/plotly-basic-2.35.3.min.js" onload="window.dispatchEvent(new Event('plotlyready'))"></script>
+    <script defer src="https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js" charset="utf-8" onload="window.dispatchEvent(new Event('aladinready'))"></script>
+    <script defer src="assets/visibility.js"></script>
   </head>
   <body>
     <div class="container-fluid p-0 app-shell">
