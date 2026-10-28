@@ -1,8 +1,6 @@
 # SpectroscopicStandards
 
-SpectroscopicStandards is a browser-based viewer for spectrophotometric standard-star spectra from the ESO, ING, and IRAF catalogues. Search by designation, browse each provider folder, compare available spectra, inspect a finder chart, and download the original data files.
-
-The **Sources & citations** tab gives one line per data folder of the relevant publication and links each reference to its NASA ADS abstract.
+SpectroscopicStandards is a browser-based viewer for spectrophotometric standard-star spectra from the ESO, ING, IRAF, and STScI catalogues. Search by designation, browse each provider folder, compare available spectra, inspect a finder chart, and download the original data files (only the compressed ones are retained in this repository).
 
 The **Target visibility** plot is adjusted for the timezone and daylight saving automatically from selected location and date, Although, please be careful with the time on the night of daylight saving.
 
@@ -32,8 +30,3 @@ Then rebuild the browser index and compressed spectrum assets:
 ```bash
 node scripts/build-web-data.mjs
 ```
-
-This writes a compressed index and `.gz` copy of every plain-text spectrum. The
-browser loads these gzip assets where `DecompressionStream` is available and
-falls back to the plain text file otherwise. Original files remain in place
-for the download links in the interface.

@@ -10,8 +10,8 @@
  * DecompressionStream, and transparently falls back to the plain-text source.
  */
 import { existsSync } from "node:fs";
-import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
-import { dirname, join, relative } from "node:path";
+import { readFile, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import { gzipSync } from "node:zlib";
 
 const root = process.cwd();
@@ -32,6 +32,7 @@ const libraryGroups = {
     "irafspechayescal",
     "irafblackbody",
   ],
+  STScI: ["stsci-calobs", "stsci-calspec", "stsci-iue-normal", "stsci-iue-subluminous"],
 };
 
 const libraryLabels = {
@@ -56,12 +57,17 @@ const libraryLabels = {
   irafoke1990: "Oke 1990 standards",
   irafspechayescal: "Hayes standards",
   irafblackbody: "Blackbody band responses",
+  "stsci-calobs": "CALOBS calibration observations",
+  "stsci-calspec": "Current CALSPEC standards",
+  "stsci-iue-normal": "IUE NEWSIPS normal-star atlas",
+  "stsci-iue-subluminous": "IUE NEWSIPS subluminous-star atlas",
 };
 
 const sourceUrls = {
   ESO: "https://eso.org/sci/observing/tools/standards.html",
   ING: "https://www.ing.iac.es//Astronomy/observing/manuals/html_manuals/tech_notes/tn065-100/workflux.html",
   IRAF: "https://github.com/iraf-community/iraf/tree/main/noao/lib/onedstds",
+  STScI: "https://archive.stsci.edu/",
 };
 
 const ingExtensions = {
@@ -72,9 +78,8 @@ const ingExtensions = {
   ingsto: "sto",
 };
 
-const textExtensions = new Set([".dat", ".fg", ".mas", ".og", ".oke", ".sto"]);
-
 function sourcePath(library, filename) {
+  if (library.startsWith("stsci-")) return `${library}/${filename}`;
   if (library === "esoxshooter") return `${library}/f${filename}.dat`;
   if (library.startsWith("eso")) return `${library}/f${filename}.dat`;
   if (library === "irafblackbody") return `${library}/${filename.toLowerCase()}.dat`;
@@ -90,32 +95,20 @@ async function readJson(filename) {
   return JSON.parse(await readFile(join(root, filename), "utf8"));
 }
 
-async function filesBelow(directory) {
-  const entries = await readdir(directory, { withFileTypes: true });
-  const output = [];
-  for (const entry of entries) {
-    const fullPath = join(directory, entry.name);
-    if (entry.isDirectory()) output.push(...(await filesBelow(fullPath)));
-    if (entry.isFile() && textExtensions.has(entry.name.slice(entry.name.lastIndexOf(".")).toLowerCase())) {
-      output.push(fullPath);
-    }
-  }
-  return output;
-}
-
-async function gzipFile(filename) {
-  const output = `${filename}.gz`;
-  const inputStat = await stat(filename);
-  if (existsSync(output) && (await stat(output)).mtimeMs >= inputStat.mtimeMs) return false;
-  const contents = await readFile(filename);
-  await writeFile(output, gzipSync(contents, { level: 9 }));
-  return true;
-}
-
-const [libraryToFilenames, filenameMetadata] = await Promise.all([
+const [localLibraryToFilenames, filenameMetadata, stsciMetadata] = await Promise.all([
   readJson("lib_to_filename.json"),
   readJson("lib_filename_to_designation_position.json"),
+  readJson("stsci-library-metadata.json"),
 ]);
+const libraryToFilenames = {
+  ...localLibraryToFilenames,
+  ...Object.fromEntries(
+    Object.entries(stsciMetadata.libraries).map(([library, details]) => [
+      library,
+      details.spectra.map((spectrum) => spectrum.filename),
+    ]),
+  ),
+};
 
 const groupForLibrary = Object.fromEntries(
   Object.entries(libraryGroups).flatMap(([group, libraries]) =>
@@ -131,21 +124,25 @@ for (const [library, filenames] of Object.entries(libraryToFilenames)) {
 
   for (const filename of filenames) {
     const id = `${library}/${filename}`;
-    const file = sourcePath(library, filename);
-    if (!existsSync(join(root, file))) {
-      missingSources.push(`${id} (${file})`);
+    const externalSpectrum = stsciMetadata.libraries[library]?.spectra.find((spectrum) => spectrum.filename === filename);
+    const file = externalSpectrum?.file || sourcePath(library, filename);
+    if (!existsSync(join(root, `${file}.gz`))) {
+      missingSources.push(`${id} (${file}.gz)`);
       continue;
     }
-    const matches = filenameMetadata[id] || [];
+    const matches = externalSpectrum
+      ? externalSpectrum.aliases.map((alias) => [alias, ...(externalSpectrum.coordinate || [])])
+      : filenameMetadata[id] || [];
     spectra[id] = {
       id,
       library,
       group,
       filename,
       file,
+      rawFile: externalSpectrum?.raw_file || `${file}.gz`,
       aliases: [...new Set(matches.map(([name]) => name))],
-      coordinate: matches.length ? matches[0].slice(1) : null,
-      kind: library === "irafblackbody" ? "relative-response" : "flux-density",
+      coordinate: externalSpectrum ? externalSpectrum.coordinate : (matches.length ? matches[0].slice(1) : null),
+      kind: externalSpectrum?.kind || (library === "irafblackbody" ? "relative-response" : "flux-density"),
     };
   }
 }
@@ -199,12 +196,7 @@ const indexText = `${JSON.stringify(index)}\n`;
 await writeFile(join(root, "spectra-index.json"), indexText);
 await writeFile(join(root, "spectra-index.json.gz"), gzipSync(indexText, { level: 9 }));
 
-const directories = Object.keys(libraryToFilenames).map((library) => join(root, library));
-const textFiles = (await Promise.all(directories.map(filesBelow))).flat();
-let compressed = 0;
-for (const filename of textFiles) if (await gzipFile(filename)) compressed += 1;
-
 console.log(
-  `Wrote spectra-index.json (${Object.keys(spectra).length} spectra, ${Object.keys(designations).length} designations); compressed ${compressed}/${textFiles.length} text spectra.`,
+  `Wrote spectra-index.json (${Object.keys(spectra).length} spectra, ${Object.keys(designations).length} designations).`,
 );
 if (missingSources.length) console.warn(`Skipped missing catalogued source files: ${missingSources.join(", ")}`);

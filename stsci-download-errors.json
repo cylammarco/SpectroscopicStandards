@@ -1,0 +1,193 @@
+[
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd74272",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/A/t3/HD74272_s.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/A/t3/HD74272_s.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd80081",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/A/t1/swp11236.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/A/t1/swp11236.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd80081",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/A/t1/HD80081_s.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/A/t1/HD80081_s.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd97534",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/A/t3/HD97534_s.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/A/t3/HD97534_s.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd103287",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/A/t1/swp0819_sl6.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/A/t1/swp0819_sl6.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd212061",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/A/t3/lwp28291_sl.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/A/t3/lwp28291_sl.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd13854",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/B/t2/lwp14597.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/B/t2/lwp14597.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd13854",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/B/t2/HD13854_l.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/B/t2/HD13854_l.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd25631",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/B/t3/HD25631_s.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/B/t3/HD25631_s.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd31327",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/B/t3/HD31327_lt.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/B/t3/HD31327_lt.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd120315",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/B/t1/swp04110.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/B/t1/swp04110.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd120315",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/B/t1/HD120315_l.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/B/t1/HD120315_l.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd8799",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t2/lwp14598.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t2/lwp14598.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd8799",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t2/lwp14598_sl.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t2/lwp14598_sl.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd8799",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t2/hd008799.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t2/hd008799.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd27561",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t2/lwp10007.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t2/lwp10007.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd43905",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t3/HD43905_s.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t3/HD43905_s.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd135153",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t3/HD135153_s.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t3/HD135153_s.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd161471",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t1/lwr15565_sl.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t1/lwr15565_sl.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd164259",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t2/HD164259_l.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t2/HD164259_l.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd165908",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t2/HD165908_l.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/F/t2/HD165908_l.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd55575",
+    "url": "https://archive.stsci.edu/data/aladdin5/iue/G/t2/lwp09610.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/data/aladdin5/iue/G/t2/lwp09610.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd93497",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/G/t1/swp08212.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/G/t1/swp08212.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd206859",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/G/t1/lwr13095.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/G/t1/lwr13095.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd10486",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/K/t3/lwp20864_sl.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/K/t3/lwp20864_sl.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd26965",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/K/t2/lwp12328<.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/K/t2/lwp12328%3C.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd166620",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/K/t2/HD166620_s.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/K/t2/HD166620_s.dat"
+  },
+  {
+    "library": "stsci-iue-normal",
+    "target": "hd93160",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/O/t3/HD93160.dat",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/O/t3/HD93160.dat"
+  },
+  {
+    "library": "stsci-iue-subluminous",
+    "target": "feige_11",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/T4/FEIGE_11.html",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/T4/FEIGE_11.html"
+  },
+  {
+    "library": "stsci-iue-subluminous",
+    "target": "lds_532-8",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/T4/LDS_532-8.html",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/T4/LDS_532-8.html"
+  },
+  {
+    "library": "stsci-iue-subluminous",
+    "target": "ross_62",
+    "url": "https://archive.stsci.edu/prepds/iuesass_web/iweb/T4/ROSS_62.html",
+    "error": "404 Client Error: Not Found for url: https://archive.stsci.edu/prepds/iuesass_web/iweb/T4/ROSS_62.html"
+  },
+  {
+    "library": "stsci-calspec",
+    "raw_file": "stsci-calspec/WDcovar_002.fits",
+    "error": "No wavelength/flux table in /home/marco/git/SpectroscopicStandards/stsci-calspec/WDcovar_002.fits"
+  }
+]
